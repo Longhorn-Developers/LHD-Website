@@ -43,7 +43,7 @@ export default async function ProjectPage({ params }: Props) {
         </Link>
         <nav aria-label="Main navigation">
           <Link href="/projects">All projects</Link>
-          <Link href="/#join">Get involved</Link>
+          <Link href="/teams">Teams</Link>
           <a className="nav-cta" href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application">
             Apply now <span aria-hidden="true">↗</span>
           </a>
@@ -117,6 +117,19 @@ export default async function ProjectPage({ params }: Props) {
         </aside>
       </section>
 
+      <section className="project-team-callout">
+        <div>
+          <p className="kicker">The people behind the project</p>
+          <h2>3 product. 3 design. 4 tech.</h2>
+        </div>
+        <p>
+          A typical project crew is ten students strong. Product keeps the work focused, design makes it clear and usable, and tech turns it into reliable open source software.
+        </p>
+        <Link href="/teams">
+          Explore the three tracks <span aria-hidden="true">↗</span>
+        </Link>
+      </section>
+
       <Link className={`next-project ${nextProject.accent}`} href={`/projects/${nextProject.slug}`}>
         <span>Next project</span>
         <strong>{nextProject.name}</strong>
@@ -125,4 +138,3 @@ export default async function ProjectPage({ params }: Props) {
     </main>
   );
 }
-

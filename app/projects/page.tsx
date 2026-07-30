@@ -39,7 +39,7 @@ export default function ProjectsPage() {
         </Link>
         <nav aria-label="Main navigation">
           <Link href="/projects">Projects</Link>
-          <Link href="/#join">Get involved</Link>
+          <Link href="/teams">Teams</Link>
           <a className="nav-cta" href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application">
             Apply now <span aria-hidden="true">↗</span>
           </a>
@@ -80,4 +80,3 @@ export default function ProjectsPage() {
     </main>
   );
 }
-

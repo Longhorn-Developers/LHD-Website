@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { activeProjects, slowerProjects } from "./_data/projects";
+import { teamTracks } from "./_data/teams";
 
 const steps = [
   {
@@ -43,7 +44,7 @@ export default function Home() {
         </a>
         <nav aria-label="Main navigation">
           <a href="#projects">Projects</a>
-          <a href="#join">Get involved</a>
+          <a href="#teams">Teams</a>
           <a
             className="nav-cta"
             href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application"
@@ -193,10 +194,48 @@ export default function Home() {
         </p>
       </section>
 
+      <section className="home-teams section" id="teams">
+        <div className="teams-intro">
+          <div>
+            <p className="kicker">Your main people</p>
+            <h2>Three tracks.<br />One project team.</h2>
+          </div>
+          <div className="mini-equation" aria-label="Three product plus three design plus four tech equals ten teammates">
+            <span><strong>3</strong> Product</span>
+            <b>+</b>
+            <span><strong>3</strong> Design</span>
+            <b>+</b>
+            <span><strong>4</strong> Tech</span>
+            <b>= 10</b>
+          </div>
+          <p>
+            Every project brings product, design, and tech into the same room. A typical ten-person crew learns together, makes decisions together, and owns the outcome together.
+          </p>
+        </div>
+
+        <div className="home-track-grid">
+          {teamTracks.map((track, index) => (
+            <Link className={`home-track-card ${track.accent}`} href={`/teams#${track.slug}`} key={track.slug}>
+              <div>
+                <span>{String(index + 1).padStart(2, "0")} / {track.count} people</span>
+                <span aria-hidden="true">↗</span>
+              </div>
+              <h3>{track.name}</h3>
+              <strong>{track.shorthand}</strong>
+              <p>{track.description}</p>
+            </Link>
+          ))}
+        </div>
+
+        <Link className="all-projects teams-link" href="/teams">
+          Meet all three tracks <Arrow />
+        </Link>
+      </section>
+
       <section className="join section" id="join">
         <div className="join-intro">
           <p className="kicker">How to get involved</p>
-          <h2>There’s a seat at the table.</h2>
+          <h2>Find your seat at the table.</h2>
           <p>
             Whether you write code, design interfaces, organize people, or
             simply notice what could work better—there’s useful work here for
