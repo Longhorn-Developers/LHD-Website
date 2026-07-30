@@ -281,8 +281,8 @@ export default function Home() {
         <p className="kicker">The repo is only the beginning</p>
         <div className="community-grid">
           <div>
-            <strong>60K+</strong>
-            <span>peak users on our flagship project</span>
+            <strong>200+</strong>
+            <span>members and alumni in our network</span>
           </div>
           <div>
             <strong>25</strong>
@@ -293,6 +293,9 @@ export default function Home() {
             <span>student-led, open source energy</span>
           </div>
         </div>
+        <Link className="community-page-link" href="/community">
+          Meet the community <Arrow />
+        </Link>
       </section>
 
       <section className="final-cta">

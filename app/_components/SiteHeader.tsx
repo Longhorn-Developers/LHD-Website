@@ -69,6 +69,10 @@ export function SiteHeader({ detail = false }: { detail?: boolean }) {
           </div>
         </div>
 
+        <Link className="nav-community-link" href="/community">
+          Community
+        </Link>
+
         <a
           className="nav-cta"
           href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application"
