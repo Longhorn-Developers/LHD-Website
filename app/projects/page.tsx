@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ClubBrand } from "../_components/ClubBrand";
 import { activeProjects, slowerProjects } from "../_data/projects";
 
 export const metadata: Metadata = {
@@ -33,10 +34,7 @@ export default function ProjectsPage() {
   return (
     <main>
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Longhorn Developers home">
-          <span className="brand-mark">LHD</span>
-          <span>Longhorn Developers</span>
-        </Link>
+        <ClubBrand />
         <nav aria-label="Main navigation">
           <Link href="/projects">Projects</Link>
           <Link href="/teams">Teams</Link>
@@ -47,7 +45,7 @@ export default function ProjectsPage() {
       </header>
 
       <section className="library-hero">
-        <p className="eyebrow"><span className="status-dot" /> The work / all projects</p>
+        <p className="eyebrow"><span className="status-dot" /> Built for the Forty Acres / all projects</p>
         <h1>Built in the open.<br /><em>Used in the wild.</em></h1>
         <p>Every project starts with a student problem. These are the tools we’re actively building, thoughtfully slowing down, or preserving after their run.</p>
       </section>

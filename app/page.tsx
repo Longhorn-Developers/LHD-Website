@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ClubBrand } from "./_components/ClubBrand";
 import { activeProjects, slowerProjects } from "./_data/projects";
 import { teamTracks } from "./_data/teams";
 
@@ -24,24 +26,11 @@ function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
 
-function LoopMark() {
-  return (
-    <span className="loop-mark" aria-hidden="true">
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
-
 export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Longhorn Developers home">
-          <span className="brand-mark">LHD</span>
-          <span>Longhorn Developers</span>
-        </a>
+        <ClubBrand />
         <nav aria-label="Main navigation">
           <a href="#projects">Projects</a>
           <a href="#teams">Teams</a>
@@ -57,17 +46,17 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow">
-            <span className="status-dot" /> UT Austin’s open source community
+            <span className="status-dot" /> Born on the Forty Acres · Austin, Texas
           </p>
           <h1>
             Build what
             <span className="hero-line">
-              campus <em>needs.</em>
+              Longhorns <em>need.</em>
             </span>
           </h1>
           <p className="hero-intro">
-            We’re a student-run club making open source tools for Longhorns, by
-            Longhorns. Learn in public. Ship work that matters.
+            We’re UT Austin’s student-run open source club—making life on the
+            Forty Acres better, one pull request at a time.
           </p>
           <div className="hero-actions">
             <a
@@ -89,9 +78,19 @@ export default function Home() {
         <div className="hero-art" aria-label="Code made by students, for students">
           <div className="orbit orbit-one" />
           <div className="orbit orbit-two" />
-          <LoopMark />
-          <div className="art-note note-top">OPEN SOURCE!</div>
-          <div className="art-note note-bottom">MADE @ UT</div>
+          <div className="hero-club-logo">
+            <Image
+              src="/lhdlogo.png"
+              alt="Longhorn Developers club logo"
+              width={512}
+              height={512}
+              sizes="(max-width: 720px) 220px, 300px"
+              priority
+              unoptimized
+            />
+          </div>
+          <div className="art-note note-top">HOOK ’EM!</div>
+          <div className="art-note note-bottom">MADE @ UT AUSTIN</div>
           <div className="code-card">
             <div className="code-dots">
               <span />
@@ -110,13 +109,46 @@ export default function Home() {
       <div className="ticker" aria-label="Club values">
         <div>
           <span>OPEN SOURCE</span><b>✦</b>
-          <span>STUDENT BUILT</span><b>✦</b>
-          <span>REAL IMPACT</span><b>✦</b>
+          <span>FOR LONGHORNS</span><b>✦</b>
+          <span>BUILT ON THE FORTY ACRES</span><b>✦</b>
+          <span>HOOK ’EM</span><b>✦</b>
           <span>OPEN SOURCE</span><b>✦</b>
-          <span>STUDENT BUILT</span><b>✦</b>
-          <span>REAL IMPACT</span><b>✦</b>
+          <span>FOR LONGHORNS</span><b>✦</b>
         </div>
       </div>
+
+      <section className="campus-pride">
+        <div className="forty-mark" aria-label="Forty Acres">
+          <strong>40</strong>
+          <span>ACRES</span>
+        </div>
+        <div className="pride-copy">
+          <p className="kicker">Austin, Texas / Burnt orange country</p>
+          <h2>Software with Longhorn spirit.</h2>
+          <p>
+            Our ideas come from the places we live every day: the course
+            schedule, lecture halls, study spots, dining halls, Canvas
+            submissions, and walks home after dark. We build for UT because
+            we’re part of UT.
+          </p>
+          <div className="pride-tags">
+            <span>UT Austin</span>
+            <span>Student-led</span>
+            <span>Open source</span>
+            <span>Austin, TX</span>
+          </div>
+        </div>
+        <div className="tower-poster" aria-label="A graphic inspired by the UT Tower">
+          <span className="tower-sun">☀</span>
+          <div className="tower-shape">
+            <i />
+            <i />
+            <i />
+          </div>
+          <strong>WHAT STARTS HERE</strong>
+          <span>SHIPS FROM HERE ↗</span>
+        </div>
+      </section>
 
       <section className="projects section" id="projects">
         <div className="section-heading">
@@ -276,10 +308,10 @@ export default function Home() {
 
       <section className="final-cta">
         <div className="cta-loop" aria-hidden="true" />
-        <p>Applications open</p>
+        <p>Applications open · Hook ’em</p>
         <h2>
-          Your next pull request
-          <span>starts here.</span>
+          Make the Forty Acres
+          <span>work better.</span>
         </h2>
         <div className="final-actions">
           <a
@@ -300,11 +332,8 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="brand footer-brand" href="#top">
-          <span className="brand-mark">LHD</span>
-          <span>Longhorn Developers</span>
-        </a>
-        <p>Projects for students, by students.</p>
+        <ClubBrand footer />
+        <p>Built with burnt-orange energy in Austin, Texas. Hook ’em.</p>
         <div className="footer-links">
           <a href="https://github.com/longhorn-developers" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.instagram.com/longhorndevelopers" target="_blank" rel="noreferrer">Instagram</a>

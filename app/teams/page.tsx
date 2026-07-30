@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ClubBrand } from "../_components/ClubBrand";
 import { teamTracks } from "../_data/teams";
 
 export const metadata: Metadata = {
@@ -12,10 +13,7 @@ export default function TeamsPage() {
   return (
     <main>
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="Longhorn Developers home">
-          <span className="brand-mark">LHD</span>
-          <span>Longhorn Developers</span>
-        </Link>
+        <ClubBrand />
         <nav aria-label="Main navigation">
           <Link href="/projects">Projects</Link>
           <Link href="/teams">Teams</Link>
@@ -27,8 +25,8 @@ export default function TeamsPage() {
 
       <section className="teams-hero">
         <div>
-          <p className="eyebrow"><span className="status-dot" /> One project team / three tracks</p>
-          <h1>Different crafts.<br /><em>One crew.</em></h1>
+          <p className="eyebrow"><span className="status-dot" /> Built on the Forty Acres / three tracks</p>
+          <h1>Different crafts.<br /><em>One herd.</em></h1>
         </div>
         <div className="team-equation" aria-label="Three product plus three design plus four tech equals one project team">
           <div className="equation-block yellow"><strong>3</strong><span>Product</span></div>
@@ -100,4 +98,3 @@ export default function TeamsPage() {
     </main>
   );
 }
-

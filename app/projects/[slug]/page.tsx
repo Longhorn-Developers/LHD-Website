@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ClubBrand } from "../../_components/ClubBrand";
 import { getProject, projects } from "../../_data/projects";
 
 type Props = {
@@ -37,10 +38,7 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <main className={`project-detail theme-${project.accent}`}>
       <header className="site-header detail-header">
-        <Link className="brand" href="/" aria-label="Longhorn Developers home">
-          <span className="brand-mark">LHD</span>
-          <span>Longhorn Developers</span>
-        </Link>
+        <ClubBrand />
         <nav aria-label="Main navigation">
           <Link href="/projects">All projects</Link>
           <Link href="/teams">Teams</Link>
@@ -64,7 +62,7 @@ export default async function ProjectPage({ params }: Props) {
           <span className="poster-index">{String(currentIndex + 1).padStart(2, "0")}</span>
           <div className="poster-loop" />
           <strong>{project.signal}</strong>
-          <span className="poster-code">OPEN / SOURCE</span>
+          <span className="poster-code">FORTY / ACRES / OPEN SOURCE</span>
         </div>
       </section>
 
