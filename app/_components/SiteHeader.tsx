@@ -2,6 +2,7 @@ import Link from "next/link";
 import { projects } from "../_data/projects";
 import { teamTracks } from "../_data/teams";
 import { ClubBrand } from "./ClubBrand";
+import { ThemeToggle } from "./ThemeToggle";
 
 const projectGroups = [
   {
@@ -72,6 +73,8 @@ export function SiteHeader({ detail = false }: { detail?: boolean }) {
         <Link className="nav-community-link" href="/community">
           Community
         </Link>
+
+        <ThemeToggle />
 
         <a
           className="nav-cta"
