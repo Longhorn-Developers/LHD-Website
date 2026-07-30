@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ClubBrand } from "../../_components/ClubBrand";
+import { SiteHeader } from "../../_components/SiteHeader";
 import { getProject, projects } from "../../_data/projects";
 
 type Props = {
@@ -37,16 +37,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <main className={`project-detail theme-${project.accent}`}>
-      <header className="site-header detail-header">
-        <ClubBrand />
-        <nav aria-label="Main navigation">
-          <Link href="/projects">All projects</Link>
-          <Link href="/teams">Teams</Link>
-          <a className="nav-cta" href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application">
-            Apply now <span aria-hidden="true">↗</span>
-          </a>
-        </nav>
-      </header>
+      <SiteHeader detail />
 
       <section className="detail-hero">
         <div className="detail-title">

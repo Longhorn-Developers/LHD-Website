@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ClubBrand } from "./_components/ClubBrand";
+import { SiteHeader } from "./_components/SiteHeader";
 import { activeProjects, slowerProjects } from "./_data/projects";
 import { teamTracks } from "./_data/teams";
 
@@ -29,19 +30,7 @@ function Arrow() {
 export default function Home() {
   return (
     <main>
-      <header className="site-header">
-        <ClubBrand />
-        <nav aria-label="Main navigation">
-          <a href="#projects">Projects</a>
-          <a href="#teams">Teams</a>
-          <a
-            className="nav-cta"
-            href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application"
-          >
-            Apply now <Arrow />
-          </a>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero" id="top">
         <div className="hero-copy">

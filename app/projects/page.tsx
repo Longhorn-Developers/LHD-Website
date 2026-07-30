@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClubBrand } from "../_components/ClubBrand";
+import { SiteHeader } from "../_components/SiteHeader";
 import { activeProjects, slowerProjects } from "../_data/projects";
 
 export const metadata: Metadata = {
@@ -33,16 +33,7 @@ function ProjectRow({
 export default function ProjectsPage() {
   return (
     <main>
-      <header className="site-header">
-        <ClubBrand />
-        <nav aria-label="Main navigation">
-          <Link href="/projects">Projects</Link>
-          <Link href="/teams">Teams</Link>
-          <a className="nav-cta" href="mailto:contact@longhorns.dev?subject=Longhorn%20Developers%20Application">
-            Apply now <span aria-hidden="true">↗</span>
-          </a>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="library-hero">
         <p className="eyebrow"><span className="status-dot" /> Built for the Forty Acres / all projects</p>
