@@ -1,55 +1,5 @@
-const projects = [
-  {
-    number: "01",
-    name: "UT Registration Plus",
-    label: "Browser extension",
-    description:
-      "More context, fewer tabs. Course ratings, grade data, and smarter planning—right inside the UT course catalog.",
-    stat: "60K+ peak users",
-    color: "orange",
-    href: "https://github.com/longhorn-developers/UT-Registration-Plus",
-  },
-  {
-    number: "02",
-    name: "UT Dining",
-    label: "Mobile app",
-    description:
-      "Campus menus, dining hours, and the answer to the most important question of the day: what are we eating?",
-    stat: "iOS + Android",
-    color: "blue",
-    href: "https://github.com/longhorn-developers/UT-Dining",
-  },
-  {
-    number: "03",
-    name: "Longhorn Lifts",
-    label: "Safety tool",
-    description:
-      "A clearer way for students on campus late to understand and access UT’s Sure Walk ride service.",
-    stat: "Built for campus",
-    color: "yellow",
-    href: "https://github.com/longhorn-developers/Longhorn-Lifts",
-  },
-  {
-    number: "04",
-    name: "Mobilize",
-    label: "Accessibility",
-    description:
-      "A React Native companion designed to help disabled students navigate UT campus with more confidence.",
-    stat: "Community-first",
-    color: "pink",
-    href: "https://github.com/longhorn-developers/Mobilize",
-  },
-  {
-    number: "05",
-    name: "UT Lectures Plus",
-    label: "Browser extension",
-    description:
-      "Searchable transcripts for Lecture Online and TowerLA, making review sessions faster and more useful.",
-    stat: "Open issues",
-    color: "green",
-    href: "https://github.com/longhorn-developers/UT-Lectures-Plus",
-  },
-];
+import Link from "next/link";
+import { activeProjects, slowerProjects } from "./_data/projects";
 
 const steps = [
   {
@@ -180,39 +130,51 @@ export default function Home() {
         </div>
 
         <div className="project-grid">
-          {projects.map((project) => (
-            <a
+          {activeProjects.map((project, index) => (
+            <Link
               key={project.name}
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-              className={`project-card ${project.color}`}
+              href={`/projects/${project.slug}`}
+              className={`project-card ${project.accent}`}
             >
               <div className="project-top">
-                <span>{project.number}</span>
+                <span>{String(index + 1).padStart(2, "0")}</span>
                 <span className="project-label">{project.label}</span>
                 <Arrow />
               </div>
               <div>
                 <h3>{project.name}</h3>
-                <p>{project.description}</p>
+                <p>{project.summary}</p>
               </div>
               <div className="project-stat">
                 <span className="mini-dot" />
-                {project.stat}
+                {project.signal}
               </div>
-            </a>
+            </Link>
           ))}
         </div>
 
-        <a
+        <Link
           className="all-projects"
-          href="https://github.com/orgs/longhorn-developers/repositories"
-          target="_blank"
-          rel="noreferrer"
+          href="/projects"
         >
-          See all 25 repositories <Arrow />
-        </a>
+          Explore every project <Arrow />
+        </Link>
+
+        <div className="sunset-strip">
+          <div>
+            <p className="kicker">Slower / sunset</p>
+            <p>Good ideas have seasons. These projects are moving more slowly or have completed their run.</p>
+          </div>
+          <div className="sunset-links">
+            {slowerProjects.map((project) => (
+              <Link key={project.slug} href={`/projects/${project.slug}`}>
+                <span>{project.name}</span>
+                <small>{project.status}</small>
+                <Arrow />
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="manifesto">
