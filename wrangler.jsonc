@@ -1,4 +1,15 @@
 {
-  "name": "lhd-website-solid",
-  "compatibility_date": "2025-06-17"
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lhd-site",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "images": {
+    // next/image optimization via Cloudflare Images
+    "binding": "IMAGES"
+  }
 }

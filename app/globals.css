@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+:root {
+  /* TODO: add custom default UT org tailwind colors */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
