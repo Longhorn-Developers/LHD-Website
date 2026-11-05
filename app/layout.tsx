@@ -1,26 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-// TODO: import all required fonts
-// import { IBM_Plex_Mono, IBM_Plex_Sans, Staatliches } from "next/font/google";
-// const plexSans = IBM_Plex_Sans({
-//   variable: "--font-plex-sans",
-//   subsets: ["latin"],
-//   weight: ["400", "500", "600", "700"],
-//   style: ["normal", "italic"],
-// });
+import { IBM_Plex_Mono, IBM_Plex_Sans, Staatliches } from "next/font/google";
 
-// const plexMono = IBM_Plex_Mono({
-//   variable: "--font-plex-mono",
-//   subsets: ["latin"],
-//   weight: ["400", "500", "600", "700"],
-// });
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
 
-// const staatliches = Staatliches({
-//   variable: "--font-staatliches",
-//   subsets: ["latin"],
-//   weight: "400",
-// });
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const staatliches = Staatliches({
+  variable: "--font-staatliches",
+  subsets: ["latin"],
+  weight: "400",
+});
 
 // Static export has no request headers, so the public URL comes from the
 // build environment (set NEXT_PUBLIC_SITE_URL in Cloudflare Pages settings).
@@ -39,8 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
       default: "Longhorn Developers",
       template: "%s",
     },
-    // "TODO: implement",
-    description:"",
+    description:
+      "A student-led open source community at UT Austin, building tools that bring a better campus experience.",
   };
 }
 
@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        // className={`${plexSans.variable} ${plexMono.variable} ${staatliches.variable}`}
+        className={`${plexSans.variable} ${plexMono.variable} ${staatliches.variable} antialiased`}
       >
         {children}
       </body>

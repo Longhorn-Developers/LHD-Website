@@ -1,7 +1,21 @@
 @import "tailwindcss";
 
-:root {
-  /* TODO: add custom default UT org tailwind colors */
+@theme inline {
+  /* UT brand colors */
+  --color-burnt-orange: #bf5700;
+  --color-ut-orange: #f8971f;
+  --color-ut-yellow: #ffd600;
+  --color-ink: #1f1f1f;
+  --color-charcoal: #333f48;
+
+  /* Wireframe placeholder greys */
+  --color-surface: #f5f5f5;
+  --color-placeholder: #d9d9d9;
+  --color-button: #e8e8e8;
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-display: var(--font-staatliches), var(--font-plex-sans), sans-serif;
 }
 
 * {
@@ -10,4 +24,9 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background: white;
+  color: #1f1f1f;
 }
