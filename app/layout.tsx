@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 import "./globals.css";
 
 import { IBM_Plex_Mono, IBM_Plex_Sans, Staatliches } from "next/font/google";
@@ -37,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
     // TODO: implement
     title: {
       default: "Longhorn Developers",
-      template: "%s",
+      template: "%s | Longhorn Developers",
     },
     description:
       "A student-led open source community at UT Austin, building tools that bring a better campus experience.",
@@ -54,7 +56,9 @@ export default function RootLayout({
       <body
         className={`${plexSans.variable} ${plexMono.variable} ${staatliches.variable} antialiased`}
       >
+        <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
