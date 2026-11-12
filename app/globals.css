@@ -12,18 +12,3 @@
 html {
   scroll-behavior: smooth;
 }
-
-.function-button {
-  background-color: var(--color-slate-800);
-  padding: 8px;
-  border-radius: 12px;
-  border-width: 1px;
-  border-color: var(--color-slate-300);
-  width: fit-content;
-  transition: ease-in-out 200ms;
-  font-size: 15px;
-}
-
-.function-button:hover {
-  transform: scale(1.03);
-}

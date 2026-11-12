@@ -1,68 +1,55 @@
 "use client";
 
 import "../globals.css";
-import {FunctionParameter, WorkerFunction, adminFunctions} from "../_data/workerFunctions"
+import {teams} from "../_data/workerFunctions"
+import TeamSection from "../_components/TeamPage"
+import MemberSection from "../_components/MemberPage"
 import {useState} from "react";
 
-export default function AdminPortal() {
-    const [selectedFunction, setSelectedFunction] = useState<WorkerFunction | null>(null);
 
-    const handleSubmitFunction = () => {
-        let proceed = true;
-        if (selectedFunction?.critical) {
-            proceed = confirm("Are you sure you want to proceed with this action?");
-        }
-        if (proceed) {
-            const elements = document.getElementById("form-group")?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
-            let parameters: string[] = [];
-            if (elements) {
-                for (const el of elements) {
-                    parameters.push(el.value);
-                }
-            }
-            // code for the functional side of things
-            // let changes: NeededChanges[] = selectedFunction?.workerFunction(...parameters);
-        }
+export default function AdminPortal() {
+    const [activeView, setActiveView] = useState('Teams');
+
+    const renderView = () => {
+        switch (activeView) {
+            case 'Teams':
+                return <TeamSection />;
+            case 'Members':
+                return <MemberSection />;
+        };
     }
 
-
     return (
-        <div className="bg-zinc-800 text-slate-100 h-screen">
-        <h1 className="p-10 text-5xl">Hello, ______!</h1>
-        <div className="flex flex-row gap-10">
-            <div className="flex flex-col gap-5 ml-10">
-                <b className="text-3xl">Commands</b>
-                {adminFunctions.map((func, index) => (
-                    <button className="function-button" key={index} onClick={() => setSelectedFunction(func)}>{func.name}</button>
-
-                ))}
-            </div>
-            <div className="border-l border-slate-300 pl-5">
-                {selectedFunction != null && (
-                <div id="form-group">
-                    <b className="text-xl">{selectedFunction?.explanation}</b>
-                    {selectedFunction?.parameters.map((parameter, index) => (
-                        <div key={index} className="mb-4">
-                            <p>{parameter.description}</p>
-                            {parameter.options.length == 0 && (
-                                <input type="text" className="border-slate-300 border focus:outline-none rounded-md px-1"></input>
-                            )}
-
-                            {parameter.options.length != 0 && (
-                                <select className="border-slate-300 border focus:outline-none px-1">   
-                                    {parameter.options.map((option, index) => (
-                                        <option value={option.value} key={index}>{option.label}</option>
-                                    ))}    
-                                </select>
-                            )}
-
-                        </div>
-                    ))}
-                    <button className="function-button" onClick={handleSubmitFunction}>Submit</button>
-                </div>
-                )}
-            </div>
+        <div className="flex h-screen">
+            <Sidebar activeView={activeView} setActiveView={setActiveView} />
+            <main className="flex-1 ml-50">
+                {renderView()}
+            </main>
         </div>
-        </div>
-    );
+    )
+}
+
+
+
+function Sidebar({ activeView, setActiveView }) {
+  const navItems = ["Teams", "Members"]
+
+  return (
+    <aside className="w-50 bg-slate-100 p-5 fixed h-screen">
+      <h2 className="font-700 text-xl">LHD Membership Portal</h2>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
+        {navItems.map((item) => (
+          <li key={item} className="my-3">
+            <button
+              onClick={() => setActiveView(item)}
+              className = {`flex items-center w-full h-10 p-[10px] text-left border-none 
+                cursor-pointer rounded-md ${activeView === item ? 'bg-[#007bff] text-white': 'bg-transparent text-black'}`}
+            >
+              {item}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
 }
