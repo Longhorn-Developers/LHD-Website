@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
     * - password: User password.
     * - team: Team the user belongs to.
     * - role: User's assigned role.
-    * - is_lead: Indicates whether the user is a team lead.
-    * - is_exec: Indicates whether the user is an executive.
+    * - isLead: Indicates whether the user is a team lead.
+    * - isExec: Indicates whether the user is an executive.
     * - exec_role: Specific executive position, if applicable.
     * - created_at: Timestamp indicating when the user account was created.
     */

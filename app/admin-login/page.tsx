@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
-const apiKey = "http://localhost:3000";
-
 const AdminLogin = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");

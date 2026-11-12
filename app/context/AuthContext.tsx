@@ -21,7 +21,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const apiKey = "http://localhost:3000";
+const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<Member | null>(null);
