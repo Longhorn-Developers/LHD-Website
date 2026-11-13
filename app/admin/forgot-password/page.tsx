@@ -6,7 +6,7 @@ import { useAuth } from '@/app/context/AuthContext';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const { handleForgotPassword, success } = useAuth();
+  const { handleForgotPassword, success, error } = useAuth();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -59,6 +59,13 @@ const ForgotPassword = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-[#BF5700] focus:border-[#BF5700] transition-all"
               />
             </div>
+
+            {/* Error */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md p-3 mb-5">
+                    {error}
+                </div>
+            )}
 
             {/* Success */}
             {success && (
