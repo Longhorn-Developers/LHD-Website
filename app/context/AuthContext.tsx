@@ -54,11 +54,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     getCurrentUser();
   }, []);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>, email: string, password: string) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>, email: string, password: string) => {
       e.preventDefault();
 
       // Login backend
       try {
+          setLoading(true);
           if (!email || !password) {
               return;
           }
@@ -66,6 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           axios.post(`${apiKey}/api/auth/login`, {email, password})
           .then((res) => {
               setUser(res.data?.user);
+              setError('');
               router.replace(`${apiKey}/admin-portal`);
               router.refresh();
           })
@@ -79,6 +81,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       } catch (error) {
           console.log(error);
+      } finally {
+        setLoading(false);
       }
   };
 
