@@ -5,8 +5,7 @@ import { useAuth } from '@/app/context/AuthContext';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { handleForgotPassword, success, error } = useAuth();
+  const { handleForgotPassword, success, error, loading } = useAuth();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -77,7 +76,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[#BF5700] hover:bg-[#9a4600] text-white font-semibold rounded-md transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full h-12 bg-[#BF5700] hover:bg-[#9a4600] text-white font-semibold rounded-md transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center disabled:opacity-40"
             >
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

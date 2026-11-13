@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
@@ -12,7 +12,14 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, error, loading } = useAuth();
+  const { handleLogin, error, loading, setError, setSuccess } = useAuth();
+
+  useEffect(() => {
+    return(() => {
+        setError('');
+        setSuccess('');
+    });
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] px-4">

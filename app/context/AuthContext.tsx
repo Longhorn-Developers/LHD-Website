@@ -108,34 +108,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent, email: string) => {
-    e.preventDefault()
+  const handleForgotPassword = async (
+      e: React.FormEvent,
+      email: string
+  ) => {
+      e.preventDefault();
 
-    if (!email) return
+      if (!email) return;
 
-    setLoading(true)
-    setError('');
-    setSuccess('');
+      setLoading(true);
+      setError('');
+      setSuccess('');
 
-    try {
-      // TODO: Call your forgot-password API
-      await axios.post(`${apiKey}/api/auth/send-forgot-password`, { email })
-      .then((res) => {
-        console.log("HI");
-        console.log(res.data);
-        setSuccess(res.data.message);
-      }).catch(err => {
-        if (axios.isAxiosError(err)) {
-          console.log(err.response?.status);     // 404
-          console.log(err.response?.data);       // { msg: "User not found." }
-          console.log(err.response?.data?.msg);  // "User not found."
-          setError(err.response?.data?.msg);
+      try {
+          const res = await axios.post(
+              `${apiKey}/api/auth/send-forgot-password`,
+              { email }
+          );
+
+          setSuccess(res.data.message);
+
+      } catch (err) {
+          if (axios.isAxiosError(err)) {
+              setError(err.response?.data?.msg || "Something went wrong.");
+          }
+      } finally {
+          setLoading(false);
       }
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+  };
 
   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>, password: string, confirmPassword: string) => {
         e.preventDefault();
@@ -166,8 +166,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setSuccess("");
 
           const res = await axios.post(`${apiKey}/api/auth/reset-password`, {
-              token,
+              resetToken: token,
               password,
+              confirmPassword
           });
 
           console.log(res.data.message);
