@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         if (!admin.isLead && !admin.isExec) {
             // User is not a lead or exec
             return NextResponse.json({
-                "mssg": "Unauthorized access."
+                "msg": "User is not authorized to access admin portal"
             }, { status: 403 });
 
         }
