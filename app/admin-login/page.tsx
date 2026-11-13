@@ -73,8 +73,8 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            <div className="flex justify-end cursor-pointer text-orange-700" onClick={() => router.push("/admin/forgot-password")}>
-                Forgot Password?
+            <div className="flex justify-end text-orange-700">
+                <span onClick={() => router.push("/admin/forgot-password")} className="cursor-pointer">Forgot Password?</span>
             </div>
 
             {error && (
