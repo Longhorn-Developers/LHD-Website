@@ -2,27 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
-    const token = request.cookies.get("admin_token")?.value;
+    const pathname = request.nextUrl.pathname;
 
+    const token = request.cookies.get("admin_token")?.value;
     const payload = token ? await verifyToken(token) : null;
 
-    const isLoginPage = request.nextUrl.pathname === "/admin-login";
+    const isAuthenticated = payload && typeof payload.adminId === "number";
 
-    // Not authenticated
-    if (!payload || typeof payload.adminId !== "number") {
-        if (isLoginPage) {
-            return NextResponse.next();
+    const publicRoutes = [
+        "/admin-login",
+        "/admin/forgot-password",
+    ];
+
+    // Public routes
+    if (publicRoutes.includes(pathname)) {
+        if (isAuthenticated) {
+            return NextResponse.redirect(
+                new URL("/admin-portal", request.url)
+            );
         }
 
+        return NextResponse.next();
+    }
+
+    // Authenticated users cannot access other /admin/* routes
+    if (pathname.startsWith("/admin/") && isAuthenticated) {
         return NextResponse.redirect(
-            new URL("/admin-login", request.url)
+            new URL("/admin-portal", request.url)
         );
     }
 
-    // Already authenticated
-    if (isLoginPage) {
+    // Protect admin portal (including nested routes)
+    if (
+        !isAuthenticated &&
+        (pathname === "/admin-portal" ||
+            pathname.startsWith("/admin-portal/"))
+    ) {
         return NextResponse.redirect(
-            new URL("/admin-portal", request.url)
+            new URL("/admin-login", request.url)
         );
     }
 
@@ -30,5 +47,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin-login", "/admin-portal/:path*"],
+    matcher: [
+        "/admin-login",
+        "/admin-portal/:path*",
+        "/admin/:path*",
+    ],
 };
