@@ -122,7 +122,7 @@ const ResetPasswordForm = ({ isValidToken }: any) => {
         <div className="mt-6 text-center">
             <button
                 type="button"
-                onClick={() => router.push("/admin-login")}
+                onClick={() => router.push("/admin-portal//admin-login")}
                 className="text-sm font-medium text-[#BF5700] hover:text-[#9a4600] transition cursor-pointer"
             >
                 Back to Login

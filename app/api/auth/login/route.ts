@@ -27,11 +27,12 @@ export async function POST(request: NextRequest) {
 
     try {
         
-       const { email, password } = await request.json();
-       
+        const { email, password } = await request.json();
+        console.log("DEV");
         // DEVELOPMENT PURPOSES: REMOVE IN PRODUCTION
         if (process.env.NODE_ENV === 'development') {
             console.log("DEV");
+            
             if (
                 email === DEVELOPER_EMAIL &&
                 password === DEVELOPER_PASSWORD
@@ -68,10 +69,11 @@ export async function POST(request: NextRequest) {
             }
         }
 
-       const user = await pool.query(
+        const user = await pool.query(
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
+        
 
         if (user.rows.length === 0) {
             return NextResponse.json(

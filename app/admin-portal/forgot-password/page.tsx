@@ -89,7 +89,7 @@ const ForgotPassword = () => {
 
           <div className="mt-6 text-center">
             <a
-              href="/admin-login"
+              href="/admin-portal/admin-login"
               className="text-sm font-medium text-orange-700 hover:text-orange-800 transition-colors"
             >
               ← Back to Sign In

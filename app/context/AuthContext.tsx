@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>, email: string, password: string) => {
       e.preventDefault();
-
+      
       // Login backend
       try {
           setLoading(true);
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await axios.post(`${apiKey}/api/auth/logout`);
       console.log("LOGGING OUT");
       setUser(null);
-      router.replace(`${apiKey}/admin-login`);
+      router.replace(`${apiKey}/admin-portal/admin-login`);
       router.refresh();
 
     } catch (error) {
