@@ -12,3 +12,18 @@
 html {
   scroll-behavior: smooth;
 }
+
+@keyframes animate-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-up {
+  animation: animate-up 0.5s ease-out forwards;
+}
