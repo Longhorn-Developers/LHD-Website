@@ -19,7 +19,7 @@ export default function AdminPortal() {
 
     useEffect(() => {
       if (!loading && !isAuthenticated) {
-        router.replace('/admin-login');
+        router.replace('/admin-portal/admin-login');
       }
     }, [loading, isAuthenticated, router]);
 
@@ -62,8 +62,7 @@ function Sidebar({ activeView, setActiveView }) {
           <li key={item} className="my-3">
             <button
               onClick={() => setActiveView(item)}
-              className = {`flex items-center w-full h-10 p-[10px] text-left border-none 
-                cursor-pointer rounded-md ${activeView === item ? 'bg-[#007bff] text-white': 'bg-transparent text-black'}`}
+              className = {`sidebar-button ${activeView === item ? 'sidebar-current' : ''}`}
             >
               {item}
             </button>

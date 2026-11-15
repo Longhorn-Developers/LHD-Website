@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { createToken } from "@/lib/auth";
+import type { Member } from "@/app/_data/workerFunctions";
 
 export async function POST(request: NextRequest) {
     /* Handle logging in a user */
@@ -27,33 +28,40 @@ export async function POST(request: NextRequest) {
 
     try {
         
-       const { email, password } = await request.json();
-       
+        const { email, password } = await request.json();
+        console.log("DEV");
         // DEVELOPMENT PURPOSES: REMOVE IN PRODUCTION
         if (process.env.NODE_ENV === 'development') {
             console.log("DEV");
+            
             if (
                 email === DEVELOPER_EMAIL &&
                 password === DEVELOPER_PASSWORD
             ) {
-                const admin = {
-                id: 1000,
-                name: 'Developer',
-                userId: 'developer',
-                email: 'developer@utexas.edu',
-                team: 'Development',
-                role: 'Developer',
-                isLead: true,
-                isExec: true,
-                exec_role: 'Developer',
+                const adminId = 1000;
+                const user: Member = {
+                    name: 'Developer',
+                    memberID: 'developer',
+                    userID: 'developer',
+                    email: 'developer@utexas.edu',
+                    githubID: '',
+                    discordID: '',
+                    status: 'active',
+                    dateJoined: new Date(),
+                    dateLeft: null,
+                    team: 'Development',
+                    role: 'Developer',
+                    isLead: true,
+                    isExec: true,
+                    execRole: 'Developer',
                 };
 
                 // Generate token
-                const token = await createToken(admin.id);
+                const token = await createToken(adminId);
 
                 const response = NextResponse.json({
                     message: "Login successful!",
-                    user: admin,
+                    user,
                 });
 
                 response.cookies.set("admin_token", token, {
@@ -68,10 +76,29 @@ export async function POST(request: NextRequest) {
             }
         }
 
-       const user = await pool.query(
-            "SELECT * FROM users WHERE email = $1",
+        const user = await pool.query(
+            `SELECT
+                id,
+                name,
+                "memberID",
+                "userID",
+                email,
+                password,
+                "githubID",
+                "discordID",
+                status,
+                "dateJoined",
+                "dateLeft",
+                team,
+                role,
+                "isLead",
+                "isExec",
+                "execRole"
+             FROM users
+             WHERE email = $1`,
             [email]
         );
+        
 
         if (user.rows.length === 0) {
             return NextResponse.json(
@@ -99,7 +126,22 @@ export async function POST(request: NextRequest) {
         // Generate token
         const token = await createToken(admin.id);
 
-        const { password: _, ...safeAdmin } = admin;
+        const safeAdmin: Member = {
+            name: admin.name,
+            memberID: admin.memberID,
+            userID: admin.userID,
+            email: admin.email,
+            githubID: admin.githubID,
+            discordID: admin.discordID,
+            status: admin.status,
+            dateJoined: admin.dateJoined,
+            dateLeft: admin.dateLeft,
+            team: admin.team,
+            role: admin.role,
+            isLead: admin.isLead,
+            isExec: admin.isExec,
+            execRole: admin.execRole,
+        };
 
         const response = NextResponse.json({
             message: "Login successful!",

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import pool from '@/lib/db';
+import type { Member } from '@/app/_data/workerFunctions';
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,7 +24,23 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await pool.query(
-      'SELECT * FROM users WHERE id = $1',
+      `SELECT
+        name,
+        email,
+        "memberID",
+        "userID",
+        "githubID",
+        "discordID",
+        status,
+        "dateJoined",
+        "dateLeft",
+        team,
+        role,
+        "isLead",
+        "isExec",
+        "execRole"
+      FROM users
+      WHERE id = $1`,
       [decoded.adminId]
     );
 
@@ -34,11 +51,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { password: _, ...user } = result.rows[0];
+    const row = result.rows[0];
+    const user: Member = {
+      name: row.name,
+      email: row.email,
+      memberID: row.memberID,
+      userID: row.userID,
+      githubID: row.githubID,
+      discordID: row.discordID,
+      status: row.status,
+      dateJoined: row.dateJoined,
+      dateLeft: row.dateLeft,
+      team: row.team,
+      role: row.role,
+      isLead: row.isLead,
+      isExec: row.isExec,
+      execRole: row.execRole,
+    };
 
     return NextResponse.json({ user });
 
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'Invalid or expired token' },
       { status: 401 }

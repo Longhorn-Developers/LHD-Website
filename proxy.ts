@@ -12,9 +12,9 @@ export async function proxy(request: NextRequest) {
         payload && typeof payload.adminId === "number";
 
     const publicRoutes = [
-        "/admin-login",
-        "/admin/forgot-password",
-        "/admin/reset-password",
+        "/admin-portal/admin-login",
+        "/admin-portal/forgot-password",
+        "/admin-portal/reset-password",
     ];
 
     // Public routes
@@ -45,11 +45,10 @@ export async function proxy(request: NextRequest) {
     // Protect admin portal
     if (
         !isAuthenticated &&
-        (pathname === "/admin-portal" ||
-            pathname.startsWith("/admin-portal/"))
+        (pathname.startsWith("/admin-portal") && !publicRoutes.includes(pathname))
     ) {
         return NextResponse.redirect(
-            new URL("/admin-login", request.url)
+            new URL("/admin-portal/admin-login", request.url)
         );
     }
 

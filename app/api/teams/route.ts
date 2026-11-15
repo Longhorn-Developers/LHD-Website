@@ -1,17 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const users = await pool.query(`
             SELECT
                 name,
+                "memberID",
                 "userID",
                 email,
+                "githubID",
+                "discordID",
+                status,
+                "dateJoined",
+                "dateLeft",
                 team,
                 role,
                 "isLead",
-                "isExec"
+                "isExec",
+                "execRole"
             FROM users
             ORDER BY
                 team ASC,

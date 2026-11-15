@@ -29,6 +29,19 @@ export const teams: Record<string, string> = {
     "ut-registration-plus": "UT Registration Plus",
 };
 
+interface NewMemberInput {
+    name: string;
+    email: string;
+    team: string;
+    role: string;
+    isLead: boolean;
+    isExec: boolean;
+    execRole: string;
+    githubID: string;
+    discordID: string;
+    status: string;
+}
+
 interface TeamContextType {
     members: Member[];
     setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
@@ -37,15 +50,15 @@ interface TeamContextType {
     setError: React.Dispatch<React.SetStateAction<string>>;
     removeMember: (memberId: string, teamId: string) => Promise<void>;
     syncTeam: (teamId: string) => void;
-    handleAddMember: (selectedMember: any, selectedTeam: any, selectedRole: any, isLead: any, isExec: any, execRole: any) => Promise<void>;
-    handleCreateMember: (
-        name: string,
-        email: string,
-        team: string,
-        role: string,
+    handleAddMember: (
+        selectedMember: string,
+        selectedTeam: string,
+        selectedRole: string,
         isLead: boolean,
-        isExec: boolean
+        isExec: boolean,
+        execRole: string
     ) => Promise<void>;
+    handleCreateMember: (member: NewMemberInput) => Promise<void>;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -102,13 +115,13 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
             setMembers((prev) =>
                 prev.map((member) =>
-                    member.userID === memberId
+                    (member.userID ?? member.memberID) === memberId
                         ? { ...member, team: "" }
                         : member
                 )
             );
 
-            if (user && user.userID === memberId) {
+            if (user && (user.userID ?? user.memberID) === memberId) {
                 router.refresh();
             }
 
@@ -146,20 +159,30 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    const handleAddMember = async (selectedMember: any, selectedTeam: any, selectedRole: any, isLead: any, isExec: any, execRole: any) => {
+    const handleAddMember = async (
+        selectedMember: string,
+        selectedTeam: string,
+        selectedRole: string,
+        isLead: boolean,
+        isExec: boolean,
+        execRole: string
+    ) => {
         if (!selectedMember) return;
 
         const member = members.find(
-            (member) => member.userID === selectedMember
+            (member) => (member.userID ?? member.memberID) === selectedMember
         );
 
         if (!member) return;
+
+        const memberId = member.userID ?? member.memberID;
+        if (!memberId) return;
 
         console.log("Added Member:", member);
 
         // Connect this to your add-member API next.
         await axios.post(
-    `${apiUrl}/api/teams/${selectedTeam}/${member.userID}`,
+    `${apiUrl}/api/teams/${selectedTeam}/${memberId}`,
     {
         role: selectedRole,
         isLead,
@@ -170,7 +193,8 @@ export function TeamProvider({ children }: { children: ReactNode }) {
             const newMember = res.data.member;
             setMembers((prev) =>
                 prev.map((member) =>
-                    member.userID === newMember.userID
+                    (member.userID ?? member.memberID) ===
+                        (newMember.userID ?? newMember.memberID)
                         ? newMember
                         : member
                 )
@@ -181,24 +205,11 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         })
     };
 
-    const handleCreateMember = async (
-        name: string,
-        email: string,
-        team: string,
-        role: string,
-        isLead: boolean,
-        isExec: boolean
-    ) => {
+    const handleCreateMember = async (member: NewMemberInput) => {
         try {
-            const res = await axios.post(
-                `${apiUrl}/api/teams/${encodeURIComponent(team)}/create-member`,
-                {
-                    name,
-                    email,
-                    role,
-                    isLead,
-                    isExec
-                }
+            const res = await axios.post<{ member: Member }>(
+                `${apiUrl}/api/teams/${encodeURIComponent(member.team)}/create-member`,
+                member
             );
 
             const newMember = res.data.member;

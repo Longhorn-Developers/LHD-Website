@@ -10,10 +10,15 @@ export async function GET(
 
         const result = await pool.query(
             `SELECT
-                id,
                 name,
+                "memberID",
                 "userID",
                 email,
+                "githubID",
+                "discordID",
+                status,
+                "dateJoined",
+                "dateLeft",
                 team,
                 role,
                 "isLead",

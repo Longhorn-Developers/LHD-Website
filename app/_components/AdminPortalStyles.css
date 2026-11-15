@@ -9,10 +9,11 @@
     gap: 5px;
 }
 
-.team-table {
+.data-table {
     text-align: left;
     border-collapse: collapse;
     width: 100%;
+    border-spacing: 20px 0; 
     tr {
         border-bottom: 1px solid #000000;
         height: 45px;
@@ -33,3 +34,21 @@
     transform: scale(1.03);
 }
 
+.sidebar-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    text-align: left;
+    border-style: none;
+    cursor: pointer;
+    border-radius: 6px;
+    background-color: transparent;
+    color: black;
+}
+
+.sidebar-current {
+    background-color: #007bff !important;
+    color: white !important;
+}

@@ -17,7 +17,11 @@ interface AuthContextType {
   success: string;
   setSuccess: React.Dispatch<React.SetStateAction<string>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
-  handleResetPassword: (e: React.FormEvent, password: string, confirmPassword: string) => void;
+  handleResetPassword: (
+    e: React.FormEvent<HTMLFormElement>,
+    password: string,
+    confirmPassword: string
+  ) => void;
 
 }
 
@@ -110,7 +114,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log("LOGGING OUT");
       setUser(null);
       setIsAuthenticated(false);
-      router.replace(`${apiKey}/admin-login`);
+      router.replace(`${apiKey}/admin-portal/admin-login`);
       router.refresh();
 
     } catch (error) {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTeam } from "@/app/context/TeamContext";
-import { Member, Role } from "../_data/workerFunctions";
+import { Member } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
 
 interface MemberModalProps {
@@ -17,39 +17,28 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
     const [selectedMember, setSelectedMember] = useState("");
 
     const [selectedTeam, setSelectedTeam] = useState(teamName);
-    const [selectedRole, setSelectedRole] = useState<Role>('select-a-role');
+    const [selectedRole, setSelectedRole] = useState("select-a-role");
 
     const [isLead, setIsLead] = useState(false);
     const [isExec, setIsExec] = useState(false);
     const [execRole, setExecRole] = useState("");
 
-    const [availableMembers, setAvailableMembers] = useState<Member[]>([]);
-    const [currentMembers, setCurrentMembers] = useState<Member[]>([]);
-
     const [addMode, setAddMode] = useState<"existing" | "new">("existing");
 
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
-    
+    const [newGithubID, setNewGithubID] = useState("");
+    const [newDiscordID, setNewDiscordID] = useState("");
+    const [newStatus, setNewStatus] = useState("active");
+
     const { user } = useAuth();
 
-
-    useEffect(() => {
-        console.log(teamName);
-    })
-
-   useEffect(() => {
-        setAvailableMembers(
-            members.filter((member) => member.team !== teamName)
-        );
-
-        setCurrentMembers(
-            members.filter((member) => member.team === teamName)
-        );
-    }, [members, teamName]);
-
-    const displayedMembers =
-        action === "add" ? availableMembers : currentMembers;
+    const roleToSave = user?.isLead ? user.role : selectedRole;
+    const getMemberId = (member: Member) =>
+        member.userID ?? member.memberID ?? member.email;
+    const availableMembers = members.filter(
+        (member) => member.team !== teamName
+    );
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-none backdrop-blur-[1px]">
@@ -105,6 +94,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                 setSelectedMember("");
                                 setNewName("");
                                 setNewEmail("");
+                                setNewGithubID("");
+                                setNewDiscordID("");
+                                setNewStatus("active");
+                                setIsLead(false);
+                                setIsExec(false);
+                                setExecRole("");
                             }}
                             className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
                         >
@@ -122,8 +117,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                         <select
                             value={selectedMember}
                             onChange={(e) => {
-                                setSelectedMember(e.target.value)
-                                setIsLead(selectedMember?.isLead)
+                                const member = availableMembers.find(
+                                    (candidate) =>
+                                        getMemberId(candidate) === e.target.value
+                                );
+                                setSelectedMember(e.target.value);
+                                setIsLead(member?.isLead ?? false);
                             }}
                             className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
                         >
@@ -131,12 +130,16 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
 
                             {availableMembers
                                 .filter((member) =>
-                                    member.userID !== user?.userID &&
+                                    getMemberId(member) !==
+                                        (user?.userID ?? user?.memberID ?? user?.email) &&
                                     (user?.isExec ||
                                         (!member.isExec && !(user?.isLead && member.isLead)))
                                 )
                                 .map((member) => (
-                                    <option key={member.userID} value={member.userID}>
+                                    <option
+                                        key={getMemberId(member)}
+                                        value={getMemberId(member)}
+                                    >
                                         {member.name} ({member.email})
                                     </option>
                                 ))}
@@ -171,6 +174,53 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
                                 />
                             </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    GitHub ID
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value={newGithubID}
+                                    onChange={(e) => setNewGithubID(e.target.value)}
+                                    placeholder="Enter GitHub ID"
+                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Discord ID
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value={newDiscordID}
+                                    onChange={(e) => setNewDiscordID(e.target.value)}
+                                    placeholder="Enter Discord ID"
+                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Status
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value={newStatus}
+                                    onChange={(e) => setNewStatus(e.target.value)}
+                                    placeholder="active"
+                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                />
+                            </div>
+
+                            <p className="text-xs text-gray-500">
+                                Member ID and user ID are generated automatically.
+                                Date joined is set on creation; date left is left blank.
+                            </p>
                         </>
                     )}
 
@@ -196,8 +246,8 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                         </label>
 
                         <select
-                            value={selectedRole}
-                            onChange={(e) => setSelectedRole(e.target.value as Role)}
+                            value={roleToSave}
+                            onChange={(e) => setSelectedRole(e.target.value)}
                             className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
                         >
                             {user?.isLead ? (
@@ -229,7 +279,7 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                 Team Lead
                             </label>
 
-                            {/* <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+                            <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={isExec}
@@ -239,10 +289,10 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     }}
                                 />
                                 Executive
-                            </label> */}
+                            </label>
                         </div>
 
-                        {/* {isExec && (
+                        {isExec && (
                             <div className="mt-4">
                                 <label className="mb-2 block text-sm font-medium text-gray-700">
                                     Executive Role
@@ -260,7 +310,7 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     <option value="secretary">Secretary</option>
                                 </select>
                             </div>
-                        )} */}
+                        )}
                     </div>
                 </div>
             )}
@@ -290,26 +340,32 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     handleAddMember(
                                         selectedMember,
                                         selectedTeam,
-                                        selectedRole,
+                                        roleToSave,
                                         isLead,
-                                        isExec
+                                        isExec,
+                                        execRole
                                     );
                                 } else {
-                                    console.log("WORKS");
                                     handleCreateMember(
-                                        newName,
-                                        newEmail,
-                                        selectedTeam,
-                                        selectedRole,
-                                        isLead,
-                                        isExec
+                                        {
+                                            name: newName,
+                                            email: newEmail,
+                                            team: selectedTeam,
+                                            role: roleToSave,
+                                            isLead,
+                                            isExec,
+                                            execRole,
+                                            githubID: newGithubID,
+                                            discordID: newDiscordID,
+                                            status: newStatus,
+                                        }
                                     );
                                 }
                             }}
                             disabled={
                                 (addMode === "new" && (!newName.trim() || !newEmail.trim())) ||
                                 (addMode === "existing" && !selectedMember.trim()) ||
-                                selectedRole === "select-a-role"
+                                roleToSave === "select-a-role"
                             }
                             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >

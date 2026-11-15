@@ -31,7 +31,21 @@ export async function POST(
                 "isExec" = $4,
                 "execRole" = $5
              WHERE "userID" = $6
-             RETURNING "userID", name, email, team, role, "isLead", "isExec", "execRole"`,
+             RETURNING
+                name,
+                email,
+                "memberID",
+                "userID",
+                "githubID",
+                "discordID",
+                status,
+                "dateJoined",
+                "dateLeft",
+                team,
+                role,
+                "isLead",
+                "isExec",
+                "execRole"`,
             [
                 teamId,
                 role,
