@@ -44,9 +44,10 @@ export type Member = {
     isLead: boolean;
     isExec: boolean;
     execRole?: string;
+    email?: string;
 }
 
-type Role = "product" | "design" | "tech"
+export type Role = "select-a-role" | "product" | "design" | "tech" | "All"
 
 // likely this will be grabbed from the database, but just as a placeholder for now
 export const teams: Record<string, string> = {

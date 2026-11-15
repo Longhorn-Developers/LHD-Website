@@ -41,6 +41,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const getCurrentUser = async () => {
+
+      // Gets the current user information
+
       try {
         const res = await axios.get(
           `${apiKey}/api/auth/me`,
@@ -64,6 +67,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>, email: string, password: string) => {
+      // Handles the user login
+
       e.preventDefault();
 
       // Login backend
@@ -73,11 +78,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               return;
           }
 
-          axios.post(`${apiKey}/api/auth/login`, {email, password})
+          await axios.post(`${apiKey}/api/auth/login`, {email, password})
           .then((res) => {
               setUser(res.data?.user);
               setError('');
-              router.replace(`${apiKey}/admin-portal`);
+              setIsAuthenticated(true);
+              router.push(`${apiKey}/admin-portal`);
               router.refresh();
           })
           .catch(error => {
@@ -96,10 +102,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleLogout = async () => {
+
+    // Handles the user logout
+
     try {
       await axios.post(`${apiKey}/api/auth/logout`);
       console.log("LOGGING OUT");
       setUser(null);
+      setIsAuthenticated(false);
       router.replace(`${apiKey}/admin-login`);
       router.refresh();
 
@@ -112,6 +122,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       e: React.FormEvent,
       email: string
   ) => {
+      // Handles sending an email to the user when they forget their password
+
       e.preventDefault();
 
       if (!email) return;
@@ -129,15 +141,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setSuccess(res.data.message);
 
       } catch (err) {
-          if (axios.isAxiosError(err)) {
-              setError(err.response?.data?.msg || "Something went wrong.");
-          }
+        if (axios.isAxiosError(err)) {
+            console.error("FORGOT PASSWORD ERROR:", err.response?.data);
+
+            setError(
+                err.response?.data?.msg ||
+                err.response?.data?.error ||
+                "Something went wrong."
+            );
+        } else {
+            console.error(err);
+            setError("Something went wrong.");
+        }
       } finally {
           setLoading(false);
       }
   };
 
   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>, password: string, confirmPassword: string) => {
+       
+       // Handles the acutal resetting of the password for a user in the database
+
         e.preventDefault();
 
         const token = searchParams.get("token");

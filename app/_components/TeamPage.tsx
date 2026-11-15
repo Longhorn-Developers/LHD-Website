@@ -1,6 +1,9 @@
 import "./ComponentStyles.css";
-import {Member} from "../_data/workerFunctions"
 import {teams} from "../_data/workerFunctions"
+import { useAuth } from "../context/AuthContext";
+import { useTeam } from "../context/TeamContext";
+import { useModal } from "../context/ModalContext";
+import MemberModal from "./MemberModal";
 
 
 export default function TeamSection() {
@@ -19,28 +22,10 @@ export default function TeamSection() {
 
 function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
 
-    const getTeamMembers = () => {
-        const names: Member[] = [];
-        // some code to grab the member list from the database
-        // rn, just some temporary guy
-        names.push({
-            name: "Someone",
-            userID: "123",
-            team: teamID,
-            role: "tech",
-            isLead: true,
-            isExec: false,
-        })
-        names.push({
-            name: "Someone Else",
-            userID: "1234",
-            team: teamID,
-            role: "product",
-            isLead: false,
-            isExec: false,
-        })
-        return names;
-    }
+    const { user } = useAuth();
+    const isLeadOrExec = user?.team == teamName && user?.isLead || user?.isExec
+    const { members, syncTeam } = useTeam();
+    const { activeModal, openModal, closeModal, setSelectedModalTeam, selectedModalTeam } = useModal();
 
     function capitalizeFirstLetter(str: string): string {
         if (!str) return str;
@@ -58,33 +43,63 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Role</th>
-                        <th scope="col"></th>
+                        {isLeadOrExec && <th scope="col">Actions</th>}
                     </tr>
                 </thead>
+
                 <tbody>
-                {getTeamMembers().map((member, index) => (
-                    <tr key={index}>
-                        <th scope="row">{member.name}</th>
-                        <td>
-                            {capitalizeFirstLetter(member.role)} 
-                            {member.isLead && (<LeadBlock/>)}
-                        </td>
-                        
-                        <td><RemoveButton /></td>
-                    </tr>
-                ))}
+                    {members.map((member) =>
+                        member.team === teamName && (
+                            <tr key={member.userID}>
+                                <th scope="row">{member.name}</th>
+
+                                <td>
+                                    {capitalizeFirstLetter(member.role)}
+                                    {member.isLead && <LeadBlock />}
+                                </td>
+
+                                {(
+                                    (user?.isLead && user.team == member.team && user.role == member.role &&
+                                        !member.isExec &&
+                                        !member.isLead) ||
+                                    user?.isExec
+                                ) && (
+                                    <td>
+                                        <RemoveButton
+                                            memberId={member.userID}
+                                            teamId={member.team}
+                                        />
+                                    </td>
+                                )}
+                            </tr>
+                            
+                        )
+                    )}
                 </tbody>
             </table>
-            <div className="flex flex-row gap-5 mt-3">
-                <button className="action-button">
-                    <p>Add/Update Members</p>
-                </button>
-                <button className="action-button">
-                    <p>Sync Team</p>
-                </button>
-                <button className="action-button text-red-400">
-                    <p>Remove Team</p>
-                </button>
+            <div className="flex flex-col min-h-[50px]">
+
+                <div className="flex flex-row flex-wrap gap-5 mt-auto pt-3">
+                    {isLeadOrExec && (
+                        <button className="action-button cursor-pointer" onClick={() => {setSelectedModalTeam(teamName); openModal("addMember")}}>
+                            <p>Add/Update Members</p>
+                        </button>
+                    )}
+
+                    <button className="action-button cursor-pointer" onClick={() => {syncTeam(teamName)}}>
+                        <p>Sync Team</p>
+                    </button>
+
+                    {isLeadOrExec && (
+                        <button className="action-button text-red-400 cursor-pointer">
+                            <p>Remove Team</p>
+                        </button>
+                    )}
+
+                    {activeModal === "addMember" && (
+                        <MemberModal onClose={closeModal} teamName={selectedModalTeam}/>
+                    )}
+                </div>
             </div>
         </div>
     )
@@ -99,9 +114,17 @@ function LeadBlock() {
     )
 }
 
-function RemoveButton() {
+interface RemoveButtonProps {
+    memberId: string;
+    teamId: string;
+}
+
+function RemoveButton({memberId, teamId}: RemoveButtonProps) {
+
+    const { removeMember } = useTeam();
+
     return (
-        <button className= "rounded-xl text-white w-fit h-fit px-2 py-1 bg-red-600! hover:bg-red-700!">
+        <button className= "rounded-xl text-white w-fit h-fit px-2 py-1 bg-red-600! hover:bg-red-700! cursor-pointer" onClick={(e) => removeMember(memberId, teamId)}>
             Remove
         </button>
     )

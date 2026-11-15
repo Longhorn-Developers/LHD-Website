@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import { ModalProvider } from "./context/ModalContext";
 
 // TODO: import all required fonts
 // import { IBM_Plex_Mono, IBM_Plex_Sans, Staatliches } from "next/font/google";
@@ -56,7 +57,9 @@ export default function RootLayout({
         // className={`${plexSans.variable} ${plexMono.variable} ${staatliches.variable}`}
       >
         <AuthProvider>
+          <ModalProvider>
           {children}
+          </ModalProvider>
         </AuthProvider>
       </body>
     </html>

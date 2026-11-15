@@ -192,9 +192,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             message: "If an account exists, a reset link has been sent."
         });
-    } catch {
+    } catch (error) {
+        console.error("SEND FORGOT PASSWORD ERROR:", error);
+
         return NextResponse.json(
-            { message: "Something went wrong" },
+            {
+                message: "Something went wrong",
+                details: error instanceof Error ? error.message : String(error)
+            },
             { status: 500 }
         );
     }
