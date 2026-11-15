@@ -1,18 +1,40 @@
-import "./ComponentStyles.css";
+import "./AdminPortalStyles.css";
 import {Member} from "../_data/workerFunctions"
 import {teams} from "../_data/workerFunctions"
+import {useState} from "react";
 
 
 export default function TeamSection() {
+    const [query, setQuery] = useState("");
+    function searchTeams(): Record<string, string> {
+        const normalizedQuery = query.toLowerCase();
+
+        const matchingEntries = Object.entries(teams).filter(([, value]) => {
+            const targetValue = value.toLowerCase();
+            return targetValue.includes(normalizedQuery);
+        });
+
+        return Object.fromEntries(matchingEntries);
+    }
+
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 p-10">
-            {Object.entries(teams).map(([teamID, teamName]) => (
-                <TeamBlock 
-                key={teamID}
-                teamName={teamName}
-                teamID={teamID}
-                />
-            ))}
+        <div className="p-10">
+            <input 
+                type="text" 
+                onChange={(e) => setQuery(e.target.value)}
+                className="border border-black mb-5 p-2 outline-0 rounded-md"
+                placeholder="Search for a team..."
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {Object.entries(searchTeams()).map(([teamID, teamName]) => (
+                    <TeamBlock 
+                    key={teamID}
+                    teamName={teamName}
+                    teamID={teamID}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
@@ -22,22 +44,26 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
     const getTeamMembers = () => {
         const names: Member[] = [];
         // some code to grab the member list from the database
-        // rn, just some temporary guy
+        // rn, just some temporary guys
         names.push({
             name: "Someone",
-            userID: "123",
-            team: teamID,
+            email: "123@google.com",
+            memberID: "123",
             role: "tech",
             isLead: true,
-            isExec: false,
+            githubID: "1",
+            discordID: "2",
+            status: "active",
         })
         names.push({
             name: "Someone Else",
-            userID: "1234",
-            team: teamID,
+            email: "1234@google.com",
+            memberID: "1234",
             role: "product",
             isLead: false,
-            isExec: false,
+            githubID: "1",
+            discordID: "2",
+            status: "active",
         })
         return names;
     }
@@ -53,7 +79,7 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                 <p className="pr-2 text-xl">{teamName}</p>
                 <p>{teamID}</p>
             </div>
-            <table className="team-table">
+            <table className="data-table">
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
@@ -91,7 +117,7 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
 
 }
 
-function LeadBlock() {
+export function LeadBlock() {
     return (
         <span className= "ml-2 rounded-xl text-white w-fit h-fit px-2 py-1 bg-green-600 text-xs">
             Lead

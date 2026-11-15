@@ -37,13 +37,12 @@ function Sidebar({ activeView, setActiveView }) {
   return (
     <aside className="w-50 bg-slate-100 p-5 fixed h-screen">
       <h2 className="font-700 text-xl">LHD Membership Portal</h2>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="list-none p-0">
         {navItems.map((item) => (
           <li key={item} className="my-3">
             <button
               onClick={() => setActiveView(item)}
-              className = {`flex items-center w-full h-10 p-[10px] text-left border-none 
-                cursor-pointer rounded-md ${activeView === item ? 'bg-[#007bff] text-white': 'bg-transparent text-black'}`}
+              className = {`sidebar-button ${activeView === item ? 'sidebar-current' : ''}`}
             >
               {item}
             </button>
