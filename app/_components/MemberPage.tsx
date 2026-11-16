@@ -3,6 +3,7 @@
 import "./AdminPortalStyles.css";
 import { Member } from "../_data/workerFunctions";
 import { useState } from "react";
+import { useTeam } from "../context/TeamContext";
 
 const sampleMembers: Member[] = [
     {
@@ -29,6 +30,7 @@ const sampleMembers: Member[] = [
 
 export default function MemberSection() {
     const [query, setQuery] = useState("");
+    const { members } = useTeam();
     const filteredMembers = sampleMembers.filter((member) =>
         member.name.toLowerCase().includes(query.toLowerCase())
     );
@@ -54,6 +56,15 @@ export default function MemberSection() {
                 </thead>
                 <tbody>
                     {filteredMembers.map((member) => (
+                        <tr key={member.memberID ?? member.userID ?? member.email}>
+                            <th>{member.name}</th>
+                            <td>{member.email}</td>
+                            <td>{member.discordID ?? "N/A"}</td>
+                            <td>{member.status ?? "N/A"}</td>
+                            <td>N/A</td>
+                        </tr>
+                    ))}
+                    {members.map((member) => (
                         <tr key={member.memberID ?? member.userID ?? member.email}>
                             <th>{member.name}</th>
                             <td>{member.email}</td>

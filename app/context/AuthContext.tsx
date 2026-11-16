@@ -22,6 +22,9 @@ interface AuthContextType {
     password: string,
     confirmPassword: string
   ) => void;
+  activeView: string;
+  setActiveView: React.Dispatch<React.SetStateAction<string>>;
+
 
 }
 
@@ -39,6 +42,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [success, setSuccess] = useState<string>("");
+  const [activeView, setActiveView] = useState('Teams');
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log(res.data.user);
 
         if (!res.data.user.isLead && !res.data.user.isExec) {
-            console.log("GET OUT!");
+            // console.log("GET OUT!");
             handleLogout();
             return;
         }
@@ -229,7 +233,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, setUser, handleLogin, error, handleLogout, loading, handleForgotPassword, success, setSuccess, setError, handleResetPassword }}
+      value={{ user, isAuthenticated, setUser, handleLogin, error, handleLogout, loading, handleForgotPassword, success, setSuccess, setError, handleResetPassword, activeView, setActiveView }}
     >
       {children}
     </AuthContext.Provider>

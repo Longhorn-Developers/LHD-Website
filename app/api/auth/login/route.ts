@@ -49,11 +49,11 @@ export async function POST(request: NextRequest) {
                     status: 'active',
                     dateJoined: new Date(),
                     dateLeft: null,
-                    team: 'Development',
-                    role: 'Developer',
-                    isLead: true,
+                    team: 'All',
+                    role: 'All',
+                    isLead: false,
                     isExec: true,
-                    execRole: 'Developer',
+                    execRole: 'All',
                 };
 
                 // Generate token

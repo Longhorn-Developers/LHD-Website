@@ -250,7 +250,7 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                             onChange={(e) => setSelectedRole(e.target.value)}
                             className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
                         >
-                            {user?.isLead ? (
+                            {user?.isLead && !user?.isExec ? (
                                 <option value={user?.role}>{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</option>
                             ) : (
                                 <>

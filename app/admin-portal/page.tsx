@@ -7,6 +7,7 @@ import MemberSection from "../_components/MemberPage"
 import {useEffect, useState} from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
+import Settings from "../_components/Settings";
 
 export default function AdminPortal() {
     const [activeView, setActiveView] = useState('Teams');
@@ -29,12 +30,14 @@ export default function AdminPortal() {
                 return <TeamSection />;
             case 'Members':
                 return <MemberSection />;
+            case 'Settings':
+              return <Settings />
         };
     }
 
     return (
         <div className="flex h-screen">
-            <Sidebar activeView={activeView} setActiveView={setActiveView} />
+            <Sidebar activeView={activeView} setActiveView={setActiveView}/>
             <main className="flex-1 ml-50">
                 {renderView()}
             </main>
@@ -43,8 +46,8 @@ export default function AdminPortal() {
 }
 
 
-function Sidebar({ activeView, setActiveView }) {
-  const navItems = ["Teams", "Members"]
+export function Sidebar({ activeView, setActiveView }) {
+  const navItems = ["Teams", "Members", "Settings"]
   const { handleLogout, user } = useAuth();
 
   return (

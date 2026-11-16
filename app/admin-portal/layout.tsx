@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import '../globals.css';
 import { TeamProvider } from "../context/TeamContext";
+import { Sidebar } from "./page";
+import { useAuth } from "../context/AuthContext";
 
 // TODO: import all required fonts
 // import { IBM_Plex_Mono, IBM_Plex_Sans, Staatliches } from "next/font/google";
@@ -49,7 +51,8 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) { 
+
   return (
     <html lang="en">
       <body
