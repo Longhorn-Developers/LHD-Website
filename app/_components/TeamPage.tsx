@@ -6,14 +6,47 @@ import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
 import MemberModal from "./MemberModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Fuse from "fuse.js"; 
+
 
 export default function TeamSection() {
     const [query, setQuery] = useState("");
-    const normalizedQuery = query.toLowerCase();
-    const matchingTeams = Object.entries(teams).filter(([, teamName]) =>
-        teamName.toLowerCase().includes(normalizedQuery)
-    );
+
+    // Convert teams into searchable objects
+    const teamList = useMemo(() => {
+        return Object.entries(teams).map(([id, teamName]) => ({
+            id,
+            teamName
+        }));
+    }, []);
+
+    console.log(teamList);
+
+    // Initialize Fuse
+    const fuse = useMemo(() => {
+        return new Fuse(teamList, {
+            keys: ["teamName"],
+            threshold: 0.4,
+            ignoreLocation: true,
+            minMatchCharLength: 1,
+            includeScore: true
+        });
+    }, [teamList]);
+
+    // Search teams
+    const matchingTeams = useMemo(() => {
+        if (!query.trim()) {
+            return teamList;
+        }
+
+        return fuse
+            .search(query.trim())
+            .sort((a, b) => (a.score ?? 1) - (b.score ?? 1))
+            .map(result => result.item);
+    }, [query, fuse, teamList]);
+
+    console.log(matchingTeams);
 
     return (
         <div className="p-10">
@@ -26,14 +59,20 @@ export default function TeamSection() {
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                {matchingTeams.map(([teamID, teamName]) => (
+                {matchingTeams.map(({ id, teamName }) => (
                     <TeamBlock
-                        key={teamID}
+                        key={id}
                         teamName={teamName}
-                        teamID={teamID}
+                        teamID={id}
                     />
                 ))}
             </div>
+
+            {matchingTeams.length === 0 && (
+                <p className="text-gray-500 flex justify-center items-center">
+                    No teams found.
+                </p>
+            )}
         </div>
     );
 }

@@ -48,36 +48,47 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const getCurrentUser = async () => {
+      let active = true;
 
-      // Gets the current user information
+      const getCurrentUser = async () => {
+          try {
+              const res = await axios.get(
+                  `${apiKey}/api/auth/me`,
+                  { withCredentials: true }
+              );
 
-      try {
-        const res = await axios.get(
-          `${apiKey}/api/auth/me`,
-          { withCredentials: true }
-        );
+              if (!active) return;
 
-        console.log(res.data.user);
+              const currentUser = res.data.user;
 
-        if (!res.data.user.isLead && !res.data.user.isExec) {
-            // console.log("GET OUT!");
-            handleLogout();
-            return;
-        }
+              if (!currentUser.isLead && !currentUser.isExec) {
+                  setUser(null);
+                  setIsAuthenticated(false);
+                  handleLogout();
+                  return;
+              }
 
-        setUser(res.data.user);
-        setIsAuthenticated(true);
+              setUser(currentUser);
+              setIsAuthenticated(true);
 
-      } catch (error) {
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+          } catch (error) {
+              if (!active) return;
 
-    getCurrentUser();
+              setUser(null);
+              setIsAuthenticated(false);
+
+          } finally {
+              if (active) {
+                  setLoading(false);
+              }
+          }
+      };
+
+      getCurrentUser();
+
+      return () => {
+          active = false;
+      };
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>, email: string, password: string) => {
