@@ -56,6 +56,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         console.log(res.data.user);
 
+        if (!res.data.user.isLead && !res.data.user.isExec) {
+            console.log("GET OUT!");
+            handleLogout();
+            return;
+        }
+
         setUser(res.data.user);
         setIsAuthenticated(true);
 
