@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log("LOGGING OUT");
       setUser(null);
       setIsAuthenticated(false);
-      router.replace(`${apiKey}/admin-portal/admin-login`);
+      router.replace(`${apiKey}/admin-login`);
       router.refresh();
 
     } catch (error) {

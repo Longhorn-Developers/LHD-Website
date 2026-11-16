@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -81,7 +81,7 @@ const AdminLogin = () => {
             </div>
 
             <div className="flex justify-end text-orange-700">
-                <span onClick={() => router.push("/admin-portal/forgot-password")} className="cursor-pointer">Forgot Password?</span>
+                <span onClick={() => router.push("/admin-login/forgot-password")} className="cursor-pointer">Forgot Password?</span>
             </div>
 
             {error && (
