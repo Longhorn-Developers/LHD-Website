@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { useAuth } from "@/app/context/AuthContext";
+import { useTeam } from "../context/TeamContext";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY; // Replace with your existing API config if different.
 
@@ -26,11 +27,12 @@ interface User {
 }
 
 const Settings = () => {
-    const { activeView, setActiveView } = useAuth();
-    const [user, setUser] = useState<User | null>(null);
+    const { activeView, setActiveView, setUser, user } = useAuth();
+    // const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
+    const { setMembers } = useTeam();
 
     const [profile, setProfile] = useState({
         name: "",
@@ -83,7 +85,7 @@ const Settings = () => {
         setMessage("");
 
         try {
-            await axios.put(
+            const res = await axios.put(
                 `${apiKey}/api/auth/profile`,
                 {
                     name: profile.name,
@@ -96,7 +98,18 @@ const Settings = () => {
                 }
             );
 
+            console.log(res.data.user);
+            setUser(res.data.user);
+
+        
+
+            setMembers((prev) => ({
+                ...prev,
+                ...res.data.user
+            }));
+
             setMessage("Your profile has been updated successfully.");
+
         } catch (error: any) {
             console.error("Profile update failed:", error);
             setMessage(

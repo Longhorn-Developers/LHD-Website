@@ -50,6 +50,7 @@ export default function MemberSection() {
                         <th className="min-w-30">Name</th>
                         <th className="min-w-55">Email</th>
                         <th className="min-w-30">Discord</th>
+                        <th className="min-w-30">Github</th>
                         <th className="min-w-20">Status</th>
                         <th>Teams</th>
                     </tr>
@@ -60,6 +61,7 @@ export default function MemberSection() {
                             <th>{member.name}</th>
                             <td>{member.email}</td>
                             <td>{member.discordID ?? "N/A"}</td>
+                            <td>{member.discordID ?? "N/A"}</td>
                             <td>{member.status ?? "N/A"}</td>
                             <td>N/A</td>
                         </tr>
@@ -69,6 +71,7 @@ export default function MemberSection() {
                             <th>{member.name}</th>
                             <td>{member.email}</td>
                             <td>{member.discordID ?? "N/A"}</td>
+                            <td>{member.githubID ?? "N/A"}</td>
                             <td>{member.status ?? "N/A"}</td>
                             <td>N/A</td>
                         </tr>
