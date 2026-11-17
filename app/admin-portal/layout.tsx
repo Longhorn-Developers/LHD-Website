@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import '../globals.css';
 import { TeamProvider } from "../context/TeamContext";
-import { Sidebar } from "./page";
 import { useAuth } from "../context/AuthContext";
 
 // TODO: import all required fonts

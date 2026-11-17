@@ -1,12 +1,15 @@
 import type { Member } from "@/app/_data/workerFunctions";
 
+const normalizeRole = (role: string | null | undefined) =>
+    typeof role === "string" ? role.trim().toLowerCase() : "";
+
 export function sortMembersForCurrentUser(
     members: Member[],
     currentUser: Member | null
 ): Member[] {
     const currentUserId = currentUser?.userID ?? currentUser?.memberID;
     const currentUserEmail = currentUser?.email?.toLowerCase();
-    const currentUserRole = currentUser?.role.trim().toLowerCase();
+    const currentUserRole = normalizeRole(currentUser?.role);
 
     const isCurrentUser = (member: Member) => {
         const memberId = member.userID ?? member.memberID;
@@ -27,15 +30,21 @@ export function sortMembersForCurrentUser(
             return currentUserOrder;
         }
 
+        const leftRole = normalizeRole(left.role);
+        const rightRole = normalizeRole(right.role);
         const leftMatchesCurrentRole =
-            left.role.trim().toLowerCase() === currentUserRole;
+            currentUserRole !== "" && leftRole === currentUserRole;
         const rightMatchesCurrentRole =
-            right.role.trim().toLowerCase() === currentUserRole;
+            currentUserRole !== "" && rightRole === currentUserRole;
         if (leftMatchesCurrentRole !== rightMatchesCurrentRole) {
             return leftMatchesCurrentRole ? -1 : 1;
         }
 
-        return left.role.localeCompare(right.role, undefined, {
+        if (!leftRole || !rightRole) {
+            return leftRole ? -1 : rightRole ? 1 : 0;
+        }
+
+        return leftRole.localeCompare(rightRole, undefined, {
             sensitivity: "base",
         });
     });
