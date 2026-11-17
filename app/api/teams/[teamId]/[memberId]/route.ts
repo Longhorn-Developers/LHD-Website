@@ -183,7 +183,6 @@ export async function PUT(
         const isAuthorizedLead =
             actor.isLead === true &&
             actor.team?.toLowerCase() === target.team.toLowerCase() &&
-            actor.role === target.role &&
             target.isExec !== true &&
             target.isLead !== true;
 
@@ -197,8 +196,7 @@ export async function PUT(
         const normalizedExecRole = isExec ? execRole.trim() : null;
         if (
             !isExecActor &&
-            (role.trim() !== target.role ||
-                isLead !== target.isLead ||
+            (isLead !== target.isLead ||
                 isExec !== target.isExec ||
                 normalizedExecRole !== (target.execRole ?? null))
         ) {

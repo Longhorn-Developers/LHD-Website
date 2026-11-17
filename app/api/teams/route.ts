@@ -1,9 +1,28 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "@/lib/auth";
 import pool from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const users = await pool.query(`
+        let currentUserId: string | null = null;
+        let currentUserRole: string | null = null;
+        const token = request.cookies.get("admin_token")?.value;
+        if (token) {
+            const decoded = await verifyToken(token);
+            if (typeof decoded?.adminId === "number") {
+                const currentUser = await pool.query(
+                    `SELECT "userID", role
+                     FROM users
+                     WHERE id = $1`,
+                    [decoded.adminId]
+                );
+                currentUserId = currentUser.rows[0]?.userID ?? null;
+                currentUserRole = currentUser.rows[0]?.role ?? null;
+            }
+        }
+
+        const users = await pool.query(
+            `
             SELECT
                 name,
                 "memberID",
@@ -21,6 +40,11 @@ export async function GET() {
                 "execRole"
             FROM users
             ORDER BY
+                CASE
+                    WHEN $1::text IS NOT NULL AND "userID"::text = $1 THEN 0
+                    WHEN $2::text IS NOT NULL AND LOWER(role) = LOWER($2) THEN 1
+                    ELSE 2
+                END ASC,
                 team ASC,
                 CASE
                     WHEN "isExec" = TRUE THEN 0
@@ -28,7 +52,9 @@ export async function GET() {
                     ELSE 2
                 END ASC,
                 role ASC;
-        `);
+            `,
+            [currentUserId, currentUserRole]
+        );
 
         const res = await pool.query(`
             SELECT

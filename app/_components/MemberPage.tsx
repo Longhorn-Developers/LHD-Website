@@ -6,7 +6,11 @@ import type { Member } from "../_data/workerFunctions";
 import { useState, type FormEvent } from "react";
 import { useTeam } from "../context/TeamContext";
 import { useAuth } from "../context/AuthContext";
-import { canEditTeamMember } from "@/lib/teamPermissions";
+import {
+    canEditTeamMember,
+    canRemoveTeamMember,
+} from "@/lib/teamPermissions";
+import { sortMembersForCurrentUser } from "@/lib/sortMembersForCurrentUser";
 
 interface MemberEditForm {
     email: string;
@@ -39,20 +43,8 @@ export default function MemberSection() {
     const hasValidEditEmail =
         editForm !== null &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email.trim());
-    const currentUserId = user?.userID ?? user?.memberID;
-    const isCurrentUser = (member: Member) => {
-        const memberId = member.userID ?? member.memberID;
-        if (currentUserId && memberId) {
-            return memberId === currentUserId;
-        }
-
-        return Boolean(
-            user?.email &&
-                member.email.toLowerCase() === user.email.toLowerCase()
-        );
-    };
-    const filteredMembers = members
-        .filter((member) =>
+    const filteredMembers = sortMembersForCurrentUser(
+        members.filter((member) =>
             [
                 member.name,
                 member.email,
@@ -61,11 +53,9 @@ export default function MemberSection() {
                 member.team,
                 member.role,
             ].some((value) => value?.toLowerCase().includes(normalizedQuery))
-        )
-        .sort(
-            (left, right) =>
-                Number(isCurrentUser(right)) - Number(isCurrentUser(left))
-        );
+        ),
+        user
+    );
 
     const openEditMemberModal = (member: Member) => {
         setEditingMember(member);
@@ -240,6 +230,10 @@ export default function MemberSection() {
                                             user,
                                             member
                                         );
+                                        const canDelete = canRemoveTeamMember(
+                                            user,
+                                            member
+                                        );
 
                                         return (
                                             <tr
@@ -288,18 +282,20 @@ export default function MemberSection() {
                                                                 >
                                                                     Edit
                                                                 </button>
-                                                                <button
-                                                                    type="button"
-                                                                    className="row-action-button remove-button cursor-pointer"
-                                                                    disabled={loading}
-                                                                    onClick={() =>
-                                                                        openDeleteConfirmation(
-                                                                            member
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Delete
-                                                                </button>
+                                                                {canDelete && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="row-action-button remove-button cursor-pointer"
+                                                                        disabled={loading}
+                                                                        onClick={() =>
+                                                                            openDeleteConfirmation(
+                                                                                member
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Delete
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         )}
                                                     </td>
@@ -416,7 +412,7 @@ export default function MemberSection() {
                                     Role
                                     <select
                                         value={editForm.role}
-                                        disabled={!user?.isExec}
+                                        disabled={!user?.isExec && !user?.isLead}
                                         onChange={(event) =>
                                             updateEditForm({
                                                 role: event.target.value,

@@ -62,7 +62,9 @@ export default function MemberModal({
     const { user } = useAuth();
 
     const roleToSave =
-        user?.isLead && !user.isExec ? user.role : selectedRole;
+        user?.isLead && !user.isExec && !isEditing
+            ? user.role
+            : selectedRole;
     const getMemberId = (member: Member) =>
         member.userID ?? member.memberID ?? member.email;
     const availableMembers = members.filter(
@@ -267,21 +269,17 @@ export default function MemberModal({
                             onChange={(e) => setSelectedRole(e.target.value)}
                             className={selectClassName}
                         >
-                            {user?.isLead && !user?.isExec ? (
-                                <option value={user?.role}>{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</option>
-                            ) : (
-                                <>
-                                    <option value="select-a-role">Select a Role</option>
-                                    <option value="developer">Developer</option>
-                                    <option value="designer">Designer</option>
-                                    <option value="tech">Tech</option>
-                                </>
-                            )}
+                            <>
+                                <option value="select-a-role">Select a Role</option>
+                                <option value="developer">Developer</option>
+                                <option value="designer">Designer</option>
+                                <option value="tech">Tech</option>
+                            </>
                         </select>
                     </div>
 
                     {/* Permissions */}
-                    <div className="rounded-xl border border-[#eadfd5] bg-white p-4">
+                    {user?.isExec &&  (<div className="rounded-xl border border-[#eadfd5] bg-white p-4">
                         <h3 className="mb-3 text-sm font-bold text-gray-900">
                             Member Permissions
                         </h3>
@@ -334,7 +332,7 @@ export default function MemberModal({
                                 </select>
                             </div>
                         )}
-                    </div>
+                    </div>)}
                 </div>
 
                 {isEditing && error && (

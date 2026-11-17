@@ -6,7 +6,11 @@ import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
 import MemberModal from "./MemberModal";
-import { canEditTeamMember } from "@/lib/teamPermissions";
+import {
+    canEditTeamMember,
+    canRemoveTeamMember,
+} from "@/lib/teamPermissions";
+import { sortMembersForCurrentUser } from "@/lib/sortMembersForCurrentUser";
 import { useMemo, useState } from "react";
 import Fuse from "fuse.js"; 
 
@@ -180,7 +184,10 @@ function TeamBlock({
                     (member.userID ?? member.memberID) === currentUserId
             )
     );
-    const teamMembers = members.filter((member) => member.team === teamName);
+    const teamMembers = sortMembersForCurrentUser(
+        members.filter((member) => member.team === teamName),
+        user
+    );
 
     function capitalizeFirstLetter(value: string): string {
         if (!value) return value;
@@ -222,7 +229,11 @@ function TeamBlock({
                                 const isCurrentUser = Boolean(
                                     memberId && memberId === currentUserId
                                 );
-                                const canRemove = canEditTeamMember(user, member);
+                                const canEdit = canEditTeamMember(user, member);
+                                const canRemove = canRemoveTeamMember(
+                                    user,
+                                    member
+                                );
 
                                 return (
                                     <tr key={memberId ?? member.email}>
@@ -231,21 +242,26 @@ function TeamBlock({
                                             {capitalizeFirstLetter(member.role)} <span> </span>
                                             {member.isLead && <LeadBlock />}
                                         </td>
-                                        {memberId && (canRemove || isCurrentUser) && (
+                                        {memberId &&
+                                            (canEdit ||
+                                                canRemove ||
+                                                isCurrentUser) && (
                                             <td>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {canRemove && !isCurrentUser && (
+                                                    {canEdit && !isCurrentUser && (
                                                         <EditButton
                                                             onClick={() =>
                                                                 onEditMember(teamName, member)
                                                             }
                                                         />
                                                     )}
-                                                    <RemoveButton
-                                                        memberId={memberId}
-                                                        teamId={member.team ?? teamName}
-                                                        label={isCurrentUser ? "Leave Project" : "Remove"}
-                                                    />
+                                                    {(canRemove || isCurrentUser) && (
+                                                        <RemoveButton
+                                                            memberId={memberId}
+                                                            teamId={member.team ?? teamName}
+                                                            label={isCurrentUser ? "Leave Project" : "Remove"}
+                                                        />
+                                                    )}
                                                 </div>
                                             </td>
                                         )}

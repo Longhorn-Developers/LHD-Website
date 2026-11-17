@@ -95,7 +95,9 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
         const getAllMembers = async () => {
             try {
-                const res = await axios.get(`${apiUrl}/api/teams`);
+                const res = await axios.get(`${apiUrl}/api/teams`, {
+                    withCredentials: true,
+                });
 
                 console.log("API USERS:", res.data.users);
 
@@ -190,7 +192,9 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         try {
             setLoading(true);
 
-            await axios.get(`${apiUrl}/api/teams/${teamName}`)
+            await axios.get(`${apiUrl}/api/teams/${teamName}`, {
+                withCredentials: true,
+            })
             .then((res) => {
                 setMembers((prev) => [
                     ...prev.filter((member) => member.team !== teamName),
