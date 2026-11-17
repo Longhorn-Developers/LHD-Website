@@ -11,7 +11,7 @@ import Settings from "../_components/Settings";
 import { Sidebar } from "../_components/Sidebar";
 
 export default function AdminPortal() {
-    const [activeView, setActiveView] = useState('Teams');
+    const [activeView, setActiveView] = useState(sessionStorage.getItem('activeView') ?? 'Teams');
     const { loading, isAuthenticated } = useAuth();
     const router = useRouter();
 

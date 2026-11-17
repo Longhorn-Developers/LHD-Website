@@ -196,8 +196,8 @@ export default function MemberSection() {
                                 <tr>
                                     <th scope="col">Name</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Discord</th>
                                     <th scope="col">GitHub</th>
+                                    <th scope="col">Discord</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Team</th>
                                     <th scope="col">Role</th>
@@ -224,8 +224,8 @@ export default function MemberSection() {
                                             >
                                                 <th scope="row">{member.name}</th>
                                                 <td>{member.email}</td>
-                                                <td>{member.discordID || "N/A"}</td>
                                                 <td>{member.githubID || "N/A"}</td>
+                                                <td>{member.discordID || "N/A"}</td>
                                                 <td>{member.status || "N/A"}</td>
                                                 <td>{member.team || "Not assigned"}</td>
                                                 <td>

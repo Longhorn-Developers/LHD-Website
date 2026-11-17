@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "../context/AuthContext";
 
 interface SidebarProps {
@@ -12,6 +12,19 @@ const navItems = ["Teams", "Members", "Settings"] as const;
 
 export function Sidebar({ activeView, setActiveView }: SidebarProps) {
     const { handleLogout, user } = useAuth();
+
+    useEffect(() => {
+        const storedView = sessionStorage.getItem("activeView");
+        const storedActiveView = navItems.find(
+            (item) => item === storedView
+        );
+        if (storedActiveView) {
+            // Restore browser-only state after hydration to keep SSR markup consistent.
+            setActiveView(storedActiveView);
+        } else if (storedView) {
+            sessionStorage.removeItem("activeView");
+        }
+    }, [setActiveView]);
 
     return (
         <aside className="fixed inset-y-0 left-0 z-40 flex h-screen w-70 flex-col border-r border-[#e7e2dc] bg-[#f7f5f2] shadow-[4px_0_18px_rgba(47,36,29,0.06)]">
@@ -51,7 +64,10 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
                                 <button
                                     type="button"
                                     aria-current={isActive ? "page" : undefined}
-                                    onClick={() => setActiveView(item)}
+                                    onClick={() => {
+                                        sessionStorage.setItem("activeView", item);
+                                        setActiveView(item);
+                                    }}
                                     className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BF5700] ${
                                         isActive
                                             ? "bg-[#BF5700] text-white shadow-sm"
