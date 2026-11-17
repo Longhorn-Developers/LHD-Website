@@ -402,7 +402,7 @@ export default function MemberModal({
                             roleToSave === "select-a-role" ||
                             (isExec && !execRole.trim())
                         }
-                        className="rounded-lg bg-[#BF5700] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#9a4600] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BF5700] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-lg bg-[#BF5700] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#9a4600] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BF5700] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                     >
                         {loading
                             ? "Saving..."

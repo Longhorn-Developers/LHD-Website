@@ -127,7 +127,19 @@ export async function PUT(
             );
         }
 
-        const { role, isLead, isExec, execRole } = await request.json();
+        const {
+            role,
+            isLead,
+            isExec,
+            execRole,
+            email,
+            githubID,
+            discordID,
+        } = await request.json();
+        const hasContactUpdates =
+            email !== undefined ||
+            githubID !== undefined ||
+            discordID !== undefined;
 
         if (
             typeof role !== "string" ||
@@ -135,7 +147,12 @@ export async function PUT(
             typeof isLead !== "boolean" ||
             typeof isExec !== "boolean" ||
             (execRole !== null && typeof execRole !== "string") ||
-            (isExec && !execRole?.trim())
+            (isExec && !execRole?.trim()) ||
+            (hasContactUpdates &&
+                (typeof email !== "string" ||
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+                    typeof githubID !== "string" ||
+                    typeof discordID !== "string"))
         ) {
             return NextResponse.json(
                 { message: "Invalid member update details" },
@@ -191,6 +208,23 @@ export async function PUT(
             );
         }
 
+        if (hasContactUpdates) {
+            const existingEmail = await pool.query(
+                `SELECT "userID"
+                 FROM users
+                 WHERE LOWER(email) = LOWER($1)
+                   AND "userID" <> $2`,
+                [email.trim(), memberId]
+            );
+
+            if (existingEmail.rows.length > 0) {
+                return NextResponse.json(
+                    { message: "Email is already in use." },
+                    { status: 409 }
+                );
+            }
+        }
+
         const result = await pool.query(
             `UPDATE users
              SET
@@ -198,8 +232,11 @@ export async function PUT(
                 role = $2,
                 "isLead" = $3,
                 "isExec" = $4,
-                "execRole" = $5
-             WHERE "userID" = $6
+                "execRole" = $5,
+                email = CASE WHEN $6 THEN $7 ELSE email END,
+                "githubID" = CASE WHEN $6 THEN $8 ELSE "githubID" END,
+                "discordID" = CASE WHEN $6 THEN $9 ELSE "discordID" END
+             WHERE "userID" = $10
              RETURNING
                 name,
                 email,
@@ -221,6 +258,10 @@ export async function PUT(
                 isLead,
                 isExec,
                 normalizedExecRole,
+                hasContactUpdates,
+                hasContactUpdates ? email.trim() : null,
+                hasContactUpdates ? githubID.trim() || null : null,
+                hasContactUpdates ? discordID.trim() || null : null,
                 memberId,
             ]
         );

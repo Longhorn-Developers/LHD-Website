@@ -42,12 +42,19 @@ interface NewMemberInput {
     status: string;
 }
 
+interface MemberContactUpdate {
+    email: string;
+    githubID: string;
+    discordID: string;
+}
+
 interface TeamContextType {
     members: Member[];
     setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
     loading: boolean;
     error: string;
     setError: React.Dispatch<React.SetStateAction<string>>;
+    deleteMember: (memberId: string) => Promise<boolean>;
     removeMember: (memberId: string, teamId: string) => Promise<void>;
     syncTeam: (teamId: string) => void;
     handleAddMember: (
@@ -65,8 +72,10 @@ interface TeamContextType {
         role: string,
         isLead: boolean,
         isExec: boolean,
-        execRole: string
-    ) => Promise<void>;
+        execRole: string,
+        contactInfo?: MemberContactUpdate,
+        closeOnSuccess?: boolean
+    ) => Promise<boolean>;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -140,6 +149,35 @@ export function TeamProvider({ children }: { children: ReactNode }) {
             );
 
             setError("Failed to remove member.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteMember = async (memberId: string): Promise<boolean> => {
+        try {
+            setLoading(true);
+            setError("");
+
+            await axios.delete(
+                `${apiUrl}/api/members/${encodeURIComponent(memberId)}`,
+                { withCredentials: true }
+            );
+
+            setMembers((prev) =>
+                prev.filter(
+                    (member) =>
+                        (member.userID ?? member.memberID) !== memberId
+                )
+            );
+            return true;
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to delete member."
+                : "Failed to delete member.";
+            console.error("Failed to delete member:", error);
+            setError(message);
+            return false;
         } finally {
             setLoading(false);
         }
@@ -237,7 +275,9 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         role: string,
         isLead: boolean,
         isExec: boolean,
-        execRole: string
+        execRole: string,
+        contactInfo?: MemberContactUpdate,
+        closeOnSuccess = true
     ) => {
         try {
             setLoading(true);
@@ -245,7 +285,13 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
             const response = await axios.put<{ member: Member }>(
                 `${apiUrl}/api/teams/${encodeURIComponent(teamId)}/${encodeURIComponent(memberId)}`,
-                { role, isLead, isExec, execRole },
+                {
+                    role,
+                    isLead,
+                    isExec,
+                    execRole,
+                    ...(contactInfo ?? {}),
+                },
                 { withCredentials: true }
             );
             const updatedMember = response.data.member;
@@ -258,13 +304,17 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                         : member
                 )
             );
-            closeModal();
+            if (closeOnSuccess) {
+                closeModal();
+            }
+            return true;
         } catch (error) {
             const message = axios.isAxiosError(error)
                 ? error.response?.data?.message ?? "Failed to update member."
                 : "Failed to update member.";
             console.error("Failed to update member:", error);
             setError(message);
+            return false;
         } finally {
             setLoading(false);
         }
@@ -278,6 +328,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                 loading,
                 error,
                 setError,
+                deleteMember,
                 removeMember,
                 syncTeam,
                 handleAddMember,

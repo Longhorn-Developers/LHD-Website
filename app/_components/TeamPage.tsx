@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
 import MemberModal from "./MemberModal";
+import { canEditTeamMember } from "@/lib/teamPermissions";
 import { useMemo, useState } from "react";
 import Fuse from "fuse.js"; 
 
@@ -221,14 +222,7 @@ function TeamBlock({
                                 const isCurrentUser = Boolean(
                                     memberId && memberId === currentUserId
                                 );
-                                const canRemove =
-                                    Boolean(memberId) &&
-                                    ((user?.isLead &&
-                                        user.team === member.team &&
-                                        user.role === member.role &&
-                                        member.isExec !== true &&
-                                        !member.isLead) ||
-                                        user?.isExec === true);
+                                const canRemove = canEditTeamMember(user, member);
 
                                 return (
                                     <tr key={memberId ?? member.email}>
