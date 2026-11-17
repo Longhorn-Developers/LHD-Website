@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTeam } from "@/app/context/TeamContext";
 import { Member } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
+import MemberSearchDropdown from "./MemberSearchDropdown";
 
 interface MemberModalProps {
     onClose: () => void;
@@ -38,6 +39,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
         member.userID ?? member.memberID ?? member.email;
     const availableMembers = members.filter(
         (member) => member.team !== teamName
+    );
+    const selectableMembers = availableMembers.filter(
+        (member) =>
+            getMemberId(member) !==
+                (user?.userID ?? user?.memberID ?? user?.email) &&
+            (user?.isExec || !member.isExec)
     );
 
     return (
@@ -114,35 +121,14 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                             Select User
                         </label>
 
-                        <select
-                            value={selectedMember}
-                            onChange={(e) => {
-                                const member = availableMembers.find(
-                                    (candidate) =>
-                                        getMemberId(candidate) === e.target.value
-                                );
-                                setSelectedMember(e.target.value);
+                        <MemberSearchDropdown
+                            members={selectableMembers}
+                            selectedMember={selectedMember}
+                            onSelectMember={(memberId) => {
+                                setSelectedMember(memberId);
                                 setIsLead(false);
                             }}
-                            className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
-                        >
-                            <option value="">Choose a user...</option>
-
-                            {availableMembers
-                                .filter((member) =>
-                                    getMemberId(member) !==
-                                        (user?.userID ?? user?.memberID ?? user?.email) &&
-                                    (user?.isExec || !member.isExec)
-                                )
-                                .map((member) => (
-                                    <option
-                                        key={getMemberId(member)}
-                                        value={getMemberId(member)}
-                                    >
-                                        {member.name} ({member.email})
-                                    </option>
-                                ))}
-                        </select>
+                        />
                     </div>
                     ) : (
                         <>
