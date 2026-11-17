@@ -14,12 +14,12 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
     const { handleLogout, user } = useAuth();
 
     return (
-        <aside className="fixed inset-y-0 left-0 z-40 flex h-screen w-50 flex-col border-r border-[#e7e2dc] bg-[#f7f5f2] shadow-[4px_0_18px_rgba(47,36,29,0.06)]">
+        <aside className="fixed inset-y-0 left-0 z-40 flex h-screen w-70 flex-col border-r border-[#e7e2dc] bg-[#f7f5f2] shadow-[4px_0_18px_rgba(47,36,29,0.06)]">
             <div className="h-1.5 w-full bg-[#BF5700]" />
 
             <div className="border-b border-[#e7e2dc] px-5 py-5">
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#BF5700] text-sm font-black tracking-wide text-white shadow-sm">
-                    LHD
+                    <img src="/lhdlogo.png" />
                 </div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#BF5700]">
                     Longhorn Developers
