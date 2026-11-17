@@ -79,10 +79,19 @@ export default function TeamSection() {
 
 function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
     const { user } = useAuth();
+    const currentUserId = user?.userID ?? user?.memberID;
     const isLeadOrExec = Boolean(
         user?.isExec || (user?.team === teamName && user.isLead)
     );
     const { members, syncTeam } = useTeam();
+    const hasCurrentUserInTeam = Boolean(
+        currentUserId &&
+            members.some(
+                (member) =>
+                    member.team === teamName &&
+                    (member.userID ?? member.memberID) === currentUserId
+            )
+    );
     const {
         activeModal,
         openModal,
@@ -107,7 +116,9 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Role</th>
-                        {isLeadOrExec && <th scope="col">Actions</th>}
+                        {(isLeadOrExec || hasCurrentUserInTeam) && (
+                            <th scope="col">Actions</th>
+                        )}
                     </tr>
                 </thead>
                 <tbody>
@@ -115,6 +126,9 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                         .filter((member) => member.team === teamName)
                         .map((member) => {
                             const memberId = member.userID ?? member.memberID;
+                            const isCurrentUser = Boolean(
+                                memberId && memberId === currentUserId
+                            );
                             const canRemove =
                                 Boolean(memberId) &&
                                 ((user?.isLead &&
@@ -131,11 +145,12 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                                         {capitalizeFirstLetter(member.role)}
                                         {member.isLead && <LeadBlock />}
                                     </td>
-                                    {canRemove && memberId && (
+                                    {memberId && (canRemove || isCurrentUser) && (
                                         <td>
                                             <RemoveButton
                                                 memberId={memberId}
                                                 teamId={member.team ?? teamName}
+                                                label={isCurrentUser ? "Leave Project" : "Remove"}
                                             />
                                         </td>
                                     )}
@@ -195,9 +210,11 @@ function LeadBlock() {
 function RemoveButton({
     memberId,
     teamId,
+    label,
 }: {
     memberId: string;
     teamId: string;
+    label: string;
 }) {
     const { removeMember } = useTeam();
 
@@ -206,7 +223,7 @@ function RemoveButton({
             className="rounded-xl text-white w-fit h-fit px-2 py-1 bg-red-600! hover:bg-red-700! cursor-pointer"
             onClick={() => removeMember(memberId, teamId)}
         >
-            Remove
+            {label}
         </button>
     );
 }

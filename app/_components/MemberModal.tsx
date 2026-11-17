@@ -122,7 +122,7 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                         getMemberId(candidate) === e.target.value
                                 );
                                 setSelectedMember(e.target.value);
-                                setIsLead(member?.isLead ?? false);
+                                setIsLead(false);
                             }}
                             className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
                         >
@@ -132,8 +132,7 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                 .filter((member) =>
                                     getMemberId(member) !==
                                         (user?.userID ?? user?.memberID ?? user?.email) &&
-                                    (user?.isExec ||
-                                        (!member.isExec && !(user?.isLead && member.isLead)))
+                                    (user?.isExec || !member.isExec)
                                 )
                                 .map((member) => (
                                     <option
@@ -270,14 +269,16 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                         </h3>
 
                         <div className="flex flex-col gap-3">
-                            <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={isLead}
-                                    onChange={(e) => setIsLead(e.target.checked)}
-                                />
-                                Team Lead
-                            </label>
+                            {user?.isExec && (
+                                <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={isLead}
+                                        onChange={(e) => setIsLead(e.target.checked)}
+                                    />
+                                    Team Lead
+                                </label>
+                            )}
 
                             <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
                                 <input
