@@ -11,19 +11,19 @@ import Settings from "../_components/Settings";
 import { Sidebar } from "../_components/Sidebar";
 
 export default function AdminPortal() {
-    const [activeView, setActiveView] = useState(sessionStorage.getItem('activeView') ?? 'Teams');
+    const [activeView, setActiveView] = useState('Teams');
     const { loading, isAuthenticated } = useAuth();
     const router = useRouter();
-
-    if (loading) {
-      return <p>Loading...</p>;
-    }
 
     useEffect(() => {
       if (!loading && !isAuthenticated) {
         router.replace('/admin-login');
       }
     }, [loading, isAuthenticated, router]);
+
+    if (loading) {
+      return <p>Loading...</p>;
+    }
 
     const renderView = () => {
         switch (activeView) {
@@ -39,7 +39,7 @@ export default function AdminPortal() {
     return (
         <div className="flex h-screen">
             <Sidebar activeView={activeView} setActiveView={setActiveView}/>
-            <main className="flex-1 ml-50">
+            <main className="ml-0 flex-1 pt-16 lg:ml-70 lg:pt-0">
                 {renderView()}
             </main>
         </div>
