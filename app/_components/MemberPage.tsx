@@ -212,11 +212,21 @@ export default function MemberSection() {
                             <thead>
                                 <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">GitHub</th>
-                                    <th scope="col">Discord</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Team</th>
+                                    <th scope="col" className="hidden md:table-cell">
+                                        Email
+                                    </th>
+                                    <th scope="col" className="hidden xl:table-cell">
+                                        GitHub
+                                    </th>
+                                    <th scope="col" className="hidden xl:table-cell">
+                                        Discord
+                                    </th>
+                                    <th scope="col" className="hidden lg:table-cell">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="hidden sm:table-cell">
+                                        Team
+                                    </th>
                                     <th scope="col">Role</th>
                                     {canManageMembers && (
                                         <th scope="col">Actions</th>
@@ -240,11 +250,21 @@ export default function MemberSection() {
                                                 }
                                             >
                                                 <th scope="row">{member.name}</th>
-                                                <td>{member.email}</td>
-                                                <td>{member.githubID || "N/A"}</td>
-                                                <td>{member.discordID || "N/A"}</td>
-                                                <td>{member.status || "N/A"}</td>
-                                                <td>{member.team || "Not assigned"}</td>
+                                                <td className="hidden md:table-cell">
+                                                    {member.email}
+                                                </td>
+                                                <td className="hidden xl:table-cell">
+                                                    {member.githubID || "N/A"}
+                                                </td>
+                                                <td className="hidden xl:table-cell">
+                                                    {member.discordID || "N/A"}
+                                                </td>
+                                                <td className="hidden lg:table-cell">
+                                                    {member.status || "N/A"}
+                                                </td>
+                                                <td className="hidden sm:table-cell">
+                                                    {member.team || "Not assigned"}
+                                                </td>
                                                 <td>
                                                     {member.role.charAt(0).toUpperCase() + member.role.slice(1).toLowerCase()}
                                                     {member.isLead && (
