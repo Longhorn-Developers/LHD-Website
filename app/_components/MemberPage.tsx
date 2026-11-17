@@ -39,16 +39,33 @@ export default function MemberSection() {
     const hasValidEditEmail =
         editForm !== null &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email.trim());
-    const filteredMembers = members.filter((member) =>
-        [
-            member.name,
-            member.email,
-            member.discordID,
-            member.githubID,
-            member.team,
-            member.role,
-        ].some((value) => value?.toLowerCase().includes(normalizedQuery))
-    );
+    const currentUserId = user?.userID ?? user?.memberID;
+    const isCurrentUser = (member: Member) => {
+        const memberId = member.userID ?? member.memberID;
+        if (currentUserId && memberId) {
+            return memberId === currentUserId;
+        }
+
+        return Boolean(
+            user?.email &&
+                member.email.toLowerCase() === user.email.toLowerCase()
+        );
+    };
+    const filteredMembers = members
+        .filter((member) =>
+            [
+                member.name,
+                member.email,
+                member.discordID,
+                member.githubID,
+                member.team,
+                member.role,
+            ].some((value) => value?.toLowerCase().includes(normalizedQuery))
+        )
+        .sort(
+            (left, right) =>
+                Number(isCurrentUser(right)) - Number(isCurrentUser(left))
+        );
 
     const openEditMemberModal = (member: Member) => {
         setEditingMember(member);
