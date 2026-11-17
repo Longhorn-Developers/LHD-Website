@@ -88,20 +88,20 @@ export default function MemberSearchDropdown({
                     }
                     setIsOpen((open) => !open);
                 }}
-                className="flex w-full items-center justify-between rounded-lg border border-gray-300 bg-white p-2.5 text-left text-sm text-gray-900 outline-none focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/20"
+                className="flex w-full items-center justify-between rounded-lg border border-[#d6d3d1] bg-white p-2.5 text-left text-sm text-gray-900 outline-none transition focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/15"
             >
                 <span className={selectedUser ? "" : "text-gray-500"}>
                     {selectedUser
                         ? `${selectedUser.name} (${selectedUser.email})`
                         : "Choose a user..."}
                 </span>
-                <span aria-hidden="true" className="ml-3 text-gray-500">
+                <span aria-hidden="true" className="ml-3 text-[#9a4600]">
                     {isOpen ? "▲" : "▼"}
                 </span>
             </button>
 
             {isOpen && (
-                <div className="absolute z-20 mt-1 w-full rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+                <div className="absolute z-20 mt-1 w-full rounded-lg border border-[#e7e2dc] bg-white p-2 shadow-lg">
                     <input
                         ref={searchInputRef}
                         type="search"
@@ -115,7 +115,7 @@ export default function MemberSearchDropdown({
                         }}
                         placeholder="Search users..."
                         aria-label="Search users"
-                        className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/20"
+                        className="mb-2 w-full rounded-md border border-[#d6d3d1] px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/15"
                     />
 
                     <ul
@@ -140,7 +140,7 @@ export default function MemberSearchDropdown({
                                                 setQuery("");
                                                 setIsOpen(false);
                                             }}
-                                            className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-800 hover:bg-orange-50 focus:bg-orange-50 focus:outline-none"
+                                            className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-800 hover:bg-[#fff4e8] hover:text-[#7a3900] focus:bg-[#fff4e8] focus:outline-none"
                                         >
                                             {member.name} ({member.email})
                                         </button>

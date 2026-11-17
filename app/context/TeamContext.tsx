@@ -59,6 +59,14 @@ interface TeamContextType {
         execRole: string
     ) => Promise<void>;
     handleCreateMember: (member: NewMemberInput) => Promise<void>;
+    handleUpdateMember: (
+        memberId: string,
+        teamId: string,
+        role: string,
+        isLead: boolean,
+        isExec: boolean,
+        execRole: string
+    ) => Promise<void>;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -223,6 +231,45 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const handleUpdateMember = async (
+        memberId: string,
+        teamId: string,
+        role: string,
+        isLead: boolean,
+        isExec: boolean,
+        execRole: string
+    ) => {
+        try {
+            setLoading(true);
+            setError("");
+
+            const response = await axios.put<{ member: Member }>(
+                `${apiUrl}/api/teams/${encodeURIComponent(teamId)}/${encodeURIComponent(memberId)}`,
+                { role, isLead, isExec, execRole },
+                { withCredentials: true }
+            );
+            const updatedMember = response.data.member;
+
+            setMembers((prev) =>
+                prev.map((member) =>
+                    (member.userID ?? member.memberID) ===
+                    (updatedMember.userID ?? updatedMember.memberID)
+                        ? updatedMember
+                        : member
+                )
+            );
+            closeModal();
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to update member."
+                : "Failed to update member.";
+            console.error("Failed to update member:", error);
+            setError(message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <TeamContext.Provider
             value={{
@@ -234,7 +281,8 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                 removeMember,
                 syncTeam,
                 handleAddMember,
-                handleCreateMember
+                handleCreateMember,
+                handleUpdateMember
             }}
         >
             {children}

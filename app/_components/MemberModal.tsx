@@ -2,27 +2,54 @@
 
 import { useState } from "react";
 import { useTeam } from "@/app/context/TeamContext";
-import { Member } from "../_data/workerFunctions";
+import type { Member } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
 import MemberSearchDropdown from "./MemberSearchDropdown";
+
+const fieldClassName =
+    "w-full rounded-lg border border-[#d6d3d1] bg-white px-3 py-2.5 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/15";
+const selectClassName = `${fieldClassName} cursor-pointer`;
+const labelClassName = "mb-2 block text-sm font-semibold text-gray-700";
 
 interface MemberModalProps {
     onClose: () => void;
     teamName: string;
+    editingMember?: Member | null;
 }
 
-export default function MemberModal({ onClose, teamName }: MemberModalProps) {
-    const { members, handleAddMember, handleCreateMember } = useTeam();
+export default function MemberModal({
+    onClose,
+    teamName,
+    editingMember = null,
+}: MemberModalProps) {
+    const {
+        members,
+        handleAddMember,
+        handleCreateMember,
+        handleUpdateMember,
+        loading,
+        error,
+    } = useTeam();
 
-    const [action, setAction] = useState<"add" | "update">("add");
-    const [selectedMember, setSelectedMember] = useState("");
+    const isEditing = editingMember !== null;
+    const [selectedMember, setSelectedMember] = useState(
+        editingMember
+            ? editingMember.userID ??
+                  editingMember.memberID ??
+                  editingMember.email
+            : ""
+    );
 
-    const [selectedTeam, setSelectedTeam] = useState(teamName);
-    const [selectedRole, setSelectedRole] = useState("select-a-role");
+    const [selectedTeam, setSelectedTeam] = useState(
+        editingMember?.team ?? teamName
+    );
+    const [selectedRole, setSelectedRole] = useState(
+        editingMember?.role ?? "select-a-role"
+    );
 
-    const [isLead, setIsLead] = useState(false);
-    const [isExec, setIsExec] = useState(false);
-    const [execRole, setExecRole] = useState("");
+    const [isLead, setIsLead] = useState(editingMember?.isLead ?? false);
+    const [isExec, setIsExec] = useState(editingMember?.isExec ?? false);
+    const [execRole, setExecRole] = useState(editingMember?.execRole ?? "");
 
     const [addMode, setAddMode] = useState<"existing" | "new">("existing");
 
@@ -34,7 +61,8 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
 
     const { user } = useAuth();
 
-    const roleToSave = user?.isLead ? user.role : selectedRole;
+    const roleToSave =
+        user?.isLead && !user.isExec ? user.role : selectedRole;
     const getMemberId = (member: Member) =>
         member.userID ?? member.memberID ?? member.email;
     const availableMembers = members.filter(
@@ -48,92 +76,96 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
     );
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-none backdrop-blur-[1px]">
-            <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#211a16]/60 p-4 backdrop-blur-sm">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="member-modal-title"
+                className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl border border-[#e7e2dc] bg-white shadow-2xl"
+            >
 
-                <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                        Manage Members
-                    </h2>
+                <div className="flex items-center justify-between bg-[#BF5700] px-6 py-5">
+                    <div>
+                        <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/75">
+                            Longhorn Developers
+                        </p>
+                        <h2
+                            id="member-modal-title"
+                            className="text-xl font-bold tracking-tight text-white"
+                        >
+                            {isEditing ? "Edit Member" : "Manage Members"}
+                        </h2>
+                        <p className="mt-1 text-xs text-white/80">
+                            Assign people, roles, and team access.
+                        </p>
+                    </div>
 
                     <button
+                        type="button"
+                        aria-label="Close member dialog"
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-800 cursor-pointer"
+                        className="flex h-9 w-9 items-center justify-center rounded-full text-xl text-white/90 transition hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white cursor-pointer"
                     >
                         ✕
                     </button>
                 </div>
 
-                {/* Action Dropdown */}
-                <div className="mb-5">
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Action
-                    </label>
-
-                    <select
-                        value={action}
-                        onChange={(e) => {
-                            setAction(e.target.value as "add" | "update");
-                            setSelectedMember("");
-                        }}
-                        className="w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 outline-none cursor-pointer"
-                    >
-                        <option value="add">Add Member</option>
-                        <option value="update">Update Member</option>
-                    </select>
-                </div>
-
+                <div className="bg-[#fffdfa] p-6">
                 {/* Add Member */}
-                {action === "add" && (
                 <div className="flex flex-col gap-4">
 
-                    {/* Select User */}
-                    {/* Add Member Type */}
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                            Member Type
-                        </label>
+                    {!isEditing && (
+                        <div>
+                            <label className={labelClassName}>
+                                Member Type
+                            </label>
 
-                        <select
-                            value={addMode}
-                            onChange={(e) => {
-                                setAddMode(e.target.value as "existing" | "new");
-                                setSelectedMember("");
-                                setNewName("");
-                                setNewEmail("");
-                                setNewGithubID("");
-                                setNewDiscordID("");
-                                setNewStatus("active");
-                                setIsLead(false);
-                                setIsExec(false);
-                                setExecRole("");
-                            }}
-                            className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
-                        >
-                            <option value="existing">Select Existing User</option>
-                            <option value="new">Create New User</option>
-                        </select>
-                    </div>
+                            <select
+                                value={addMode}
+                                onChange={(e) => {
+                                    setAddMode(e.target.value as "existing" | "new");
+                                    setSelectedMember("");
+                                    setNewName("");
+                                    setNewEmail("");
+                                    setNewGithubID("");
+                                    setNewDiscordID("");
+                                    setNewStatus("active");
+                                    setIsLead(false);
+                                    setIsExec(false);
+                                    setExecRole("");
+                                }}
+                                className={selectClassName}
+                            >
+                                <option value="existing">Select Existing User</option>
+                                <option value="new">Create New User</option>
+                            </select>
+                        </div>
+                    )}
                     {/* New User Information */}
-                    {addMode === "existing" ? (
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                            Select User
-                        </label>
+                    {isEditing ? (
+                        <div className="rounded-lg border border-[#f0dfd1] bg-[#fff7f0] px-3 py-3 text-sm text-gray-700">
+                            Editing <span className="font-semibold text-[#7a3900]">{editingMember?.name}</span>
+                            <span className="text-gray-600"> ({editingMember?.email})</span>
+                        </div>
+                    ) : addMode === "existing" ? (
+                        <div>
+                            <label className={labelClassName}>
+                                Select User
+                            </label>
 
-                        <MemberSearchDropdown
-                            members={selectableMembers}
-                            selectedMember={selectedMember}
-                            onSelectMember={(memberId) => {
-                                setSelectedMember(memberId);
-                                setIsLead(false);
-                            }}
-                        />
-                    </div>
+                            <MemberSearchDropdown
+                                members={selectableMembers}
+                                selectedMember={selectedMember}
+                                onSelectMember={(memberId) => {
+                                    setSelectedMember(memberId);
+                                    setIsLead(false);
+                                }}
+                            />
+                        </div>
                     ) : (
                         <>
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     Full Name
                                 </label>
 
@@ -142,12 +174,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
                                     placeholder="Enter full name"
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                    className={fieldClassName}
                                 />
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     Email
                                 </label>
 
@@ -156,12 +188,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     value={newEmail}
                                     onChange={(e) => setNewEmail(e.target.value)}
                                     placeholder="Enter email address"
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                    className={fieldClassName}
                                 />
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     GitHub ID
                                 </label>
 
@@ -170,12 +202,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     value={newGithubID}
                                     onChange={(e) => setNewGithubID(e.target.value)}
                                     placeholder="Enter GitHub ID"
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                    className={fieldClassName}
                                 />
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     Discord ID
                                 </label>
 
@@ -184,12 +216,12 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     value={newDiscordID}
                                     onChange={(e) => setNewDiscordID(e.target.value)}
                                     placeholder="Enter Discord ID"
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                    className={fieldClassName}
                                 />
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     Status
                                 </label>
 
@@ -198,11 +230,11 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                     value={newStatus}
                                     onChange={(e) => setNewStatus(e.target.value)}
                                     placeholder="active"
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm"
+                                    className={fieldClassName}
                                 />
                             </div>
 
-                            <p className="text-xs text-gray-500">
+                            <p className="rounded-lg border border-[#eee5dc] bg-white px-3 py-2 text-xs leading-5 text-gray-600">
                                 Member ID and user ID are generated automatically.
                                 Date joined is set on creation; date left is left blank.
                             </p>
@@ -211,14 +243,14 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
 
                    {/* Select Team */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className={labelClassName}>
                             Team
                         </label>
 
                         <select
                             value={selectedTeam}
                             onChange={(e) => setSelectedTeam(e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
+                            className={selectClassName}
                         >
                             <option value={teamName}>{teamName}</option>
                         </select>
@@ -226,14 +258,14 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
 
                     {/* Select Role */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className={labelClassName}>
                             Role
                         </label>
 
                         <select
                             value={roleToSave}
                             onChange={(e) => setSelectedRole(e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
+                            className={selectClassName}
                         >
                             {user?.isLead && !user?.isExec ? (
                                 <option value={user?.role}>{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</option>
@@ -249,8 +281,8 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                     </div>
 
                     {/* Permissions */}
-                    <div className="rounded-lg border border-gray-200 p-4">
-                        <h3 className="mb-3 text-sm font-semibold text-gray-800">
+                    <div className="rounded-xl border border-[#eadfd5] bg-white p-4">
+                        <h3 className="mb-3 text-sm font-bold text-gray-900">
                             Member Permissions
                         </h3>
 
@@ -261,34 +293,38 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                                         type="checkbox"
                                         checked={isLead}
                                         onChange={(e) => setIsLead(e.target.checked)}
+                                        className="accent-[#BF5700]"
                                     />
                                     Team Lead
                                 </label>
                             )}
 
-                            <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={isExec}
-                                    onChange={(e) => {
-                                        setIsExec(e.target.checked);
-                                        if (!e.target.checked) setExecRole("");
-                                    }}
-                                />
-                                Executive
-                            </label>
+                            {(!isEditing || user?.isExec) && (
+                                <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={isExec}
+                                        onChange={(e) => {
+                                            setIsExec(e.target.checked);
+                                            if (!e.target.checked) setExecRole("");
+                                        }}
+                                        className="accent-[#BF5700]"
+                                    />
+                                    Executive
+                                </label>
+                            )}
                         </div>
 
                         {isExec && (
                             <div className="mt-4">
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                <label className={labelClassName}>
                                     Executive Role
                                 </label>
 
                                 <select
                                     value={execRole}
                                     onChange={(e) => setExecRole(e.target.value)}
-                                    className="w-full rounded-lg border border-gray-300 p-2.5 text-sm cursor-pointer"
+                                    className={selectClassName}
                                 >
                                     <option value="">Select executive role...</option>
                                     <option value="president">President</option>
@@ -300,65 +336,83 @@ export default function MemberModal({ onClose, teamName }: MemberModalProps) {
                         )}
                     </div>
                 </div>
-            )}
 
-                {/* Update Member */}
-                {action === "update" && (
-                    <div className="mb-5">
-                        <p className="text-sm text-gray-500">
-                            Update member functionality will go here.
-                        </p>
-                    </div>
+                {isEditing && error && (
+                    <p role="alert" className="mt-4 text-sm text-red-600">
+                        {error}
+                    </p>
                 )}
 
                 {/* Footer */}
-                <div className="flex justify-end gap-3 mt-9">
+                <div className="mt-6 flex justify-end gap-3 border-t border-[#eee9e3] pt-5">
                     <button
+                        type="button"
                         onClick={onClose}
-                        className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        className="rounded-lg border border-[#d6d3d1] bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#BF5700] hover:bg-[#fff7f0] hover:text-[#9a4600] cursor-pointer"
                     >
                         Cancel
                     </button>
 
-                    {action === "add" && (
-                           <button
-                            onClick={() => {
-                                if (addMode === "existing") {
-                                    handleAddMember(
-                                        selectedMember,
+                    <button
+                        onClick={() => {
+                            if (isEditing && editingMember) {
+                                const memberId =
+                                    editingMember.userID ?? editingMember.memberID;
+                                if (memberId) {
+                                    handleUpdateMember(
+                                        memberId,
                                         selectedTeam,
                                         roleToSave,
                                         isLead,
                                         isExec,
                                         execRole
                                     );
-                                } else {
-                                    handleCreateMember(
-                                        {
-                                            name: newName,
-                                            email: newEmail,
-                                            team: selectedTeam,
-                                            role: roleToSave,
-                                            isLead,
-                                            isExec,
-                                            execRole,
-                                            githubID: newGithubID,
-                                            discordID: newDiscordID,
-                                            status: newStatus,
-                                        }
-                                    );
                                 }
-                            }}
-                            disabled={
-                                (addMode === "new" && (!newName.trim() || !newEmail.trim())) ||
-                                (addMode === "existing" && !selectedMember.trim()) ||
-                                roleToSave === "select-a-role"
+                            } else if (addMode === "existing") {
+                                handleAddMember(
+                                    selectedMember,
+                                    selectedTeam,
+                                    roleToSave,
+                                    isLead,
+                                    isExec,
+                                    execRole
+                                );
+                            } else {
+                                handleCreateMember({
+                                    name: newName,
+                                    email: newEmail,
+                                    team: selectedTeam,
+                                    role: roleToSave,
+                                    isLead,
+                                    isExec,
+                                    execRole,
+                                    githubID: newGithubID,
+                                    discordID: newDiscordID,
+                                    status: newStatus,
+                                });
                             }
-                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            {addMode === "new" ? "Create Member" : "Add Member"}
-                        </button>
-                    )}
+                        }}
+                        disabled={
+                            loading ||
+                            (isEditing
+                                ? !editingMember?.userID && !editingMember?.memberID
+                                : (addMode === "new" &&
+                                      (!newName.trim() || !newEmail.trim())) ||
+                                  (addMode === "existing" && !selectedMember.trim())) ||
+                            roleToSave === "select-a-role" ||
+                            (isExec && !execRole.trim())
+                        }
+                        className="rounded-lg bg-[#BF5700] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#9a4600] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BF5700] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {loading
+                            ? "Saving..."
+                            : isEditing
+                              ? "Save Changes"
+                              : addMode === "new"
+                                ? "Create Member"
+                                : "Add Member"}
+                    </button>
+                </div>
                 </div>
             </div>
         </div>

@@ -31,50 +31,50 @@ export async function POST(request: NextRequest) {
         const { email, password } = await request.json();
         console.log("DEV");
         // DEVELOPMENT PURPOSES: REMOVE IN PRODUCTION
-        if (process.env.NODE_ENV === 'development') {
-            console.log("DEV");
+        // if (process.env.NODE_ENV === 'development') {
+        //     console.log("DEV");
             
-            if (
-                email === DEVELOPER_EMAIL &&
-                password === DEVELOPER_PASSWORD
-            ) {
-                const adminId = 1000;
-                const user: Member = {
-                    name: 'Developer',
-                    memberID: 'developer',
-                    userID: 'developer',
-                    email: 'developer@utexas.edu',
-                    githubID: '',
-                    discordID: '',
-                    status: 'active',
-                    dateJoined: new Date(),
-                    dateLeft: null,
-                    team: 'All',
-                    role: 'All',
-                    isLead: false,
-                    isExec: true,
-                    execRole: 'All',
-                };
+        //     if (
+        //         email === DEVELOPER_EMAIL &&
+        //         password === DEVELOPER_PASSWORD
+        //     ) {
+        //         const adminId = 1000;
+        //         const user: Member = {
+        //             name: 'Developer',
+        //             memberID: 'developer',
+        //             userID: 'developer',
+        //             email: 'developer@utexas.edu',
+        //             githubID: '',
+        //             discordID: '',
+        //             status: 'active',
+        //             dateJoined: new Date(),
+        //             dateLeft: null,
+        //             team: 'All',
+        //             role: 'All',
+        //             isLead: false,
+        //             isExec: true,
+        //             execRole: 'All',
+        //         };
 
-                // Generate token
-                const token = await createToken(adminId);
+        //         // Generate token
+        //         const token = await createToken(adminId);
 
-                const response = NextResponse.json({
-                    message: "Login successful!",
-                    user,
-                });
+        //         const response = NextResponse.json({
+        //             message: "Login successful!",
+        //             user,
+        //         });
 
-                response.cookies.set("admin_token", token, {
-                    httpOnly: true,
-                    secure: false,
-                    sameSite: "lax",
-                    path: "/",
-                    maxAge: 60 * 60,
-                });
+        //         response.cookies.set("admin_token", token, {
+        //             httpOnly: true,
+        //             secure: false,
+        //             sameSite: "lax",
+        //             path: "/",
+        //             maxAge: 60 * 60,
+        //         });
 
-                return response;
-            }
-        }
+        //         return response;
+        //     }
+        // }
 
         const user = await pool.query(
             `SELECT

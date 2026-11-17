@@ -1,7 +1,7 @@
 "use client";
 
 import "./AdminPortalStyles.css";
-import { teams } from "../_data/workerFunctions";
+import { teams, type Member } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
@@ -12,6 +12,10 @@ import Fuse from "fuse.js";
 
 export default function TeamSection() {
     const [query, setQuery] = useState("");
+    const [selectedModalTeam, setSelectedModalTeam] = useState("");
+    const [editingMember, setEditingMember] = useState<Member | null>(null);
+    const { activeModal, openModal, closeModal } = useModal();
+    const { setError } = useTeam();
 
     // Convert teams into searchable objects
     const teamList = useMemo(() => {
@@ -46,38 +50,121 @@ export default function TeamSection() {
             .map(result => result.item);
     }, [query, fuse, teamList]);
 
+    const openAddMemberModal = (teamName: string) => {
+        setSelectedModalTeam(teamName);
+        setEditingMember(null);
+        setError("");
+        openModal("addMember");
+    };
+
+    const openEditMemberModal = (teamName: string, member: Member) => {
+        setSelectedModalTeam(teamName);
+        setEditingMember(member);
+        setError("");
+        openModal("addMember");
+    };
+
+    const closeMemberModal = () => {
+        setEditingMember(null);
+        closeModal();
+    };
+
     console.log(matchingTeams);
 
     return (
-        <div className="p-10">
-            <input
-                type="text"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="border border-black mb-5 p-2 outline-0 rounded-md"
-                placeholder="Search for a team..."
-            />
+        <main className="team-page">
+            <div className="team-page-content">
+                <header className="team-page-header">
+                    <div>
+                        <p className="team-page-eyebrow">LONGHORN DEVELOPERS</p>
+                        <h1 className="team-page-title">Teams &amp; Members</h1>
+                        <p className="team-page-description">
+                            Find a team and see the people building with us.
+                        </p>
+                    </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                {matchingTeams.map(({ id, teamName }) => (
-                    <TeamBlock
-                        key={id}
-                        teamName={teamName}
-                        teamID={id}
-                    />
-                ))}
+                    <div className="team-search">
+                        <label className="sr-only" htmlFor="team-search-input">
+                            Search teams
+                        </label>
+                        <svg
+                            aria-hidden="true"
+                            className="team-search-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                            />
+                            <path
+                                d="m16 16 4 4"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                            />
+                        </svg>
+                        <input
+                            id="team-search-input"
+                            type="search"
+                            value={query}
+                            onChange={(event) => setQuery(event.target.value)}
+                            className="team-search-input"
+                            placeholder="Search teams..."
+                        />
+                    </div>
+                </header>
+
+                <div className="team-results-count" aria-live="polite">
+                    {matchingTeams.length}{" "}
+                    {matchingTeams.length === 1 ? "team" : "teams"}
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {matchingTeams.map(({ id, teamName }) => (
+                        <TeamBlock
+                            key={id}
+                            teamName={teamName}
+                            teamID={id}
+                            onAddMember={openAddMemberModal}
+                            onEditMember={openEditMemberModal}
+                        />
+                    ))}
+                </div>
+
+                {matchingTeams.length === 0 && (
+                    <div className="team-empty-state">
+                        <p className="team-empty-title">No teams found</p>
+                        <p>Try a different search or check the spelling.</p>
+                    </div>
+                )}
             </div>
 
-            {matchingTeams.length === 0 && (
-                <p className="text-gray-500 flex justify-center items-center">
-                    No teams found.
-                </p>
+            {activeModal === "addMember" && selectedModalTeam && (
+                <MemberModal
+                    onClose={closeMemberModal}
+                    teamName={selectedModalTeam}
+                    editingMember={editingMember}
+                />
             )}
-        </div>
+        </main>
     );
 }
 
-function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
+function TeamBlock({
+    teamName,
+    teamID,
+    onAddMember,
+    onEditMember,
+}: {
+    teamName: string;
+    teamID: string;
+    onAddMember: (teamName: string) => void;
+    onEditMember: (teamName: string, member: Member) => void;
+}) {
     const { user } = useAuth();
     const currentUserId = user?.userID ?? user?.memberID;
     const isLeadOrExec = Boolean(
@@ -92,13 +179,7 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
                     (member.userID ?? member.memberID) === currentUserId
             )
     );
-    const {
-        activeModal,
-        openModal,
-        closeModal,
-        setSelectedModalTeam,
-        selectedModalTeam,
-    } = useModal();
+    const teamMembers = members.filter((member) => member.team === teamName);
 
     function capitalizeFirstLetter(value: string): string {
         if (!value) return value;
@@ -106,104 +187,128 @@ function TeamBlock({ teamName, teamID }: { teamName: string; teamID: string }) {
     }
 
     return (
-        <div className="team-block">
-            <div className="flex flex-row items-center">
-                <p className="pr-2 text-xl">{teamName}</p>
-                <p>{teamID}</p>
+        <section className="team-block">
+            <div className="team-block-header">
+                <h2 className="team-block-title">{teamName}</h2>
+                <span className="team-id-badge">{teamID}</span>
             </div>
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Role</th>
-                        {(isLeadOrExec || hasCurrentUserInTeam) && (
-                            <th scope="col">Actions</th>
-                        )}
-                    </tr>
-                </thead>
-                <tbody>
-                    {members
-                        .filter((member) => member.team === teamName)
-                        .map((member) => {
-                            const memberId = member.userID ?? member.memberID;
-                            const isCurrentUser = Boolean(
-                                memberId && memberId === currentUserId
-                            );
-                            const canRemove =
-                                Boolean(memberId) &&
-                                ((user?.isLead &&
-                                    user.team === member.team &&
-                                    user.role === member.role &&
-                                    member.isExec !== true &&
-                                    !member.isLead) ||
-                                    user?.isExec === true);
+            <div className="team-table-wrap">
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Role</th>
+                            {(isLeadOrExec || hasCurrentUserInTeam) && (
+                                <th scope="col">Actions</th>
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {teamMembers.length === 0 ? (
+                            <tr>
+                                <td
+                                    colSpan={
+                                        isLeadOrExec || hasCurrentUserInTeam ? 3 : 2
+                                    }
+                                    className="team-empty-members"
+                                >
+                                    No members assigned yet.
+                                </td>
+                            </tr>
+                        ) : (
+                            teamMembers.map((member) => {
+                                const memberId = member.userID ?? member.memberID;
+                                const isCurrentUser = Boolean(
+                                    memberId && memberId === currentUserId
+                                );
+                                const canRemove =
+                                    Boolean(memberId) &&
+                                    ((user?.isLead &&
+                                        user.team === member.team &&
+                                        user.role === member.role &&
+                                        member.isExec !== true &&
+                                        !member.isLead) ||
+                                        user?.isExec === true);
 
-                            return (
-                                <tr key={memberId ?? member.email}>
-                                    <th scope="row">{member.name}</th>
-                                    <td>
-                                        {capitalizeFirstLetter(member.role)}
-                                        {member.isLead && <LeadBlock />}
-                                    </td>
-                                    {memberId && (canRemove || isCurrentUser) && (
+                                return (
+                                    <tr key={memberId ?? member.email}>
+                                        <th scope="row">{member.name}</th>
                                         <td>
-                                            <RemoveButton
-                                                memberId={memberId}
-                                                teamId={member.team ?? teamName}
-                                                label={isCurrentUser ? "Leave Project" : "Remove"}
-                                            />
+                                            {capitalizeFirstLetter(member.role)} <span> </span>
+                                            {member.isLead && <LeadBlock />}
                                         </td>
-                                    )}
-                                </tr>
-                            );
-                        })}
-                </tbody>
-            </table>
+                                        {memberId && (canRemove || isCurrentUser) && (
+                                            <td>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {canRemove && !isCurrentUser && (
+                                                        <EditButton
+                                                            onClick={() =>
+                                                                onEditMember(teamName, member)
+                                                            }
+                                                        />
+                                                    )}
+                                                    <RemoveButton
+                                                        memberId={memberId}
+                                                        teamId={member.team ?? teamName}
+                                                        label={isCurrentUser ? "Leave Project" : "Remove"}
+                                                    />
+                                                </div>
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            })
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-            <div className="flex flex-col min-h-[50px]">
-                <div className="flex flex-row flex-wrap gap-5 mt-auto pt-3">
+            <div className="team-card-footer">
+                <div className="flex flex-row flex-wrap gap-3">
                     {isLeadOrExec && (
                         <button
-                            className="action-button cursor-pointer"
-                            onClick={() => {
-                                setSelectedModalTeam(teamName);
-                                openModal("addMember");
-                            }}
+                            className="action-button action-button-primary cursor-pointer"
+                            onClick={() => onAddMember(teamName)}
                         >
                             <p>Add/Update Members</p>
                         </button>
                     )}
 
                     <button
-                        className="action-button cursor-pointer"
+                        className="action-button action-button-secondary cursor-pointer"
                         onClick={() => syncTeam(teamName)}
                     >
                         <p>Sync Team</p>
                     </button>
 
                     {isLeadOrExec && (
-                        <button className="action-button text-red-400 cursor-pointer">
+                        <button className="action-button action-button-danger cursor-pointer">
                             <p>Remove Team</p>
                         </button>
                     )}
-
-                    {activeModal === "addMember" && (
-                        <MemberModal
-                            onClose={closeModal}
-                            teamName={selectedModalTeam}
-                        />
-                    )}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
 
 function LeadBlock() {
     return (
-        <span className="ml-2 rounded-xl text-white w-fit h-fit px-2 py-1 bg-green-600 text-xs">
+        <span className="lead-badge">
             Lead
         </span>
+    );
+}
+
+function EditButton({ onClick }: { onClick: () => void }) {
+    return (
+        <button
+            type="button"
+            className="row-action-button edit-button cursor-pointer"
+            onClick={onClick}
+        >
+            Edit
+        </button>
     );
 }
 
@@ -220,7 +325,7 @@ function RemoveButton({
 
     return (
         <button
-            className="rounded-xl text-white w-fit h-fit px-2 py-1 bg-red-600! hover:bg-red-700! cursor-pointer"
+            className="row-action-button remove-button cursor-pointer"
             onClick={() => removeMember(memberId, teamId)}
         >
             {label}
