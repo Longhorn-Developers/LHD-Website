@@ -137,6 +137,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsAuthenticated(false);
       router.replace(`${apiKey}/admin-login`);
       router.refresh();
+      sessionStorage.removeItem('activeView');
 
     } catch (error) {
       console.error('Logout failed:', error);
