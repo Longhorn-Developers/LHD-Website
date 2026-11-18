@@ -32,7 +32,7 @@ const Settings = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
-    const { setMembers } = useTeam();
+    const { setMembers, setUsers } = useTeam();
 
     const [profile, setProfile] = useState({
         name: "",
@@ -99,14 +99,24 @@ const Settings = () => {
             );
 
             console.log(res.data.user);
-            setUser(res.data.user);
-
-        
-
-            setMembers((prev) => ({
-                ...prev,
-                ...res.data.user
-            }));
+            const updatedUser = res.data.user;
+            setUser((previous) =>
+                previous ? { ...previous, ...updatedUser } : previous
+            );
+            setMembers((prev) =>
+                prev.map((member) =>
+                    member.userID === updatedUser.userID
+                        ? { ...member, ...updatedUser }
+                        : member
+                )
+            );
+            setUsers((prev) =>
+                prev.map((member) =>
+                    member.userID === updatedUser.userID
+                        ? { ...member, ...updatedUser }
+                        : member
+                )
+            );
 
             setMessage("Your profile has been updated successfully.");
 

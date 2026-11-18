@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import pool from "@/lib/db";
+import {
+    activeMembershipCondition,
+    memberSelectFields,
+    resolveTeam,
+} from "@/lib/teamDb";
 
 export async function GET(
     request: NextRequest,
@@ -8,55 +13,48 @@ export async function GET(
 ) {
     try {
         const { teamId } = await params;
+        const team = await resolveTeam(pool, teamId);
+
+        if (!team) {
+            return NextResponse.json(
+                { error: "Team not found." },
+                { status: 404 }
+            );
+        }
+
         let currentUserId: string | null = null;
-        let currentUserRole: string | null = null;
         const token = request.cookies.get("admin_token")?.value;
         if (token) {
             const decoded = await verifyToken(token);
             if (typeof decoded?.adminId === "number") {
                 const currentUser = await pool.query(
-                    `SELECT "userID", role
+                    `SELECT "userID"
                      FROM users
                      WHERE id = $1`,
                     [decoded.adminId]
                 );
                 currentUserId = currentUser.rows[0]?.userID ?? null;
-                currentUserRole = currentUser.rows[0]?.role ?? null;
             }
         }
 
         const result = await pool.query(
-            `SELECT
-                name,
-                "memberID",
-                "userID",
-                email,
-                "githubID",
-                "discordID",
-                status,
-                "dateJoined",
-                "dateLeft",
-                team,
-                role,
-                "isLead",
-                "isExec",
-                "execRole"
-            FROM users
-            WHERE team = $1
-            ORDER BY
-                CASE
-                    WHEN $2::text IS NOT NULL AND "userID"::text = $2 THEN 0
-                    WHEN $3::text IS NOT NULL AND LOWER(role) = LOWER($3) THEN 1
-                    ELSE 2
-                END ASC,
-                "isExec" DESC,
-                "isLead" DESC,
-                name ASC`,
-            [teamId, currentUserId, currentUserRole]
+            `SELECT ${memberSelectFields}
+             FROM team_members tm
+             JOIN users u ON u.id = tm.user_id
+             JOIN teams t ON t.id = tm.team_id
+             WHERE tm.team_id = $1
+               AND ${activeMembershipCondition}
+             ORDER BY
+                CASE WHEN $2::text IS NOT NULL AND u."userID"::text = $2
+                     THEN 0 ELSE 1 END,
+                u."isExec" DESC,
+                tm.islead DESC,
+                u.name ASC`,
+            [team.id, currentUserId]
         );
 
         return NextResponse.json(
-            { members: result.rows },
+            { team, members: result.rows },
             { status: 200 }
         );
     } catch (error) {

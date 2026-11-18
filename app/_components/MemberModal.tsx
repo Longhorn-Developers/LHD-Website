@@ -24,6 +24,7 @@ export default function MemberModal({
 }: MemberModalProps) {
     const {
         members,
+        users,
         handleAddMember,
         handleCreateMember,
         handleUpdateMember,
@@ -61,14 +62,27 @@ export default function MemberModal({
 
     const { user } = useAuth();
 
+    const currentTeamMembership = members.find(
+        (member) =>
+            (member.userID ?? member.memberID) ===
+                (user?.userID ?? user?.memberID) &&
+            member.team?.toLowerCase() === selectedTeam.toLowerCase()
+    );
     const roleToSave =
-        user?.isLead && !user.isExec && !isEditing
-            ? user.role
+        currentTeamMembership?.isLead && !user?.isExec && !isEditing
+            ? currentTeamMembership.role
             : selectedRole;
     const getMemberId = (member: Member) =>
         member.userID ?? member.memberID ?? member.email;
-    const availableMembers = members.filter(
-        (member) => member.team !== teamName
+    const availableMembers = users.filter(
+        (member) =>
+            !members.some(
+                (membership) =>
+                    (membership.userID ?? membership.memberID) ===
+                        (member.userID ?? member.memberID) &&
+                    membership.team?.toLowerCase() ===
+                        selectedTeam.toLowerCase()
+            )
     );
     const selectableMembers = availableMembers.filter(
         (member) =>

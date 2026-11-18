@@ -11,23 +11,8 @@ import {
 import axios from "axios";
 import { useAuth } from "./AuthContext";
 import { useRouter } from "next/navigation";
-import { Member } from "../_data/workerFunctions";
+import { Member, Team } from "../_data/workerFunctions";
 import { useModal } from "./ModalContext";
-
-export const teams: Record<string, string> = {
-    "help-me-bevo": "Help Me Bevo",
-    "internal-tooling": "Internal Tooling",
-    "lhd-website": "LHD Website",
-    "longhorn-lifts": "Longhorn Lifts",
-    "longhorn-loop": "Longhorn Loop",
-    "longhorn-studies": "Longhorn Studies",
-    "mobilize-ut": "Mobilize UT",
-    "pet-bevo": "Pet Bevo",
-    "ut-dining": "UT Dining",
-    "ut-lectures-plus": "UT Lectures Plus",
-    "ut-marketplace": "UT Marketplace",
-    "ut-registration-plus": "UT Registration Plus",
-};
 
 interface NewMemberInput {
     name: string;
@@ -51,6 +36,11 @@ interface MemberContactUpdate {
 interface TeamContextType {
     members: Member[];
     setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
+    users: Member[];
+    setUsers: React.Dispatch<React.SetStateAction<Member[]>>;
+    teams: Team[];
+    databaseAvailable: boolean;
+    createTeam: (name: string, description: string) => Promise<boolean>;
     loading: boolean;
     error: string;
     setError: React.Dispatch<React.SetStateAction<string>>;
@@ -83,6 +73,9 @@ const TeamContext = createContext<TeamContextType | undefined>(undefined);
 export function TeamProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
     const [members, setMembers] = useState<Member[]>([]);
+    const [users, setUsers] = useState<Member[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
+    const [databaseAvailable, setDatabaseAvailable] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
@@ -99,44 +92,39 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                     withCredentials: true,
                 });
 
-                console.log("API USERS:", res.data.users);
-
-                setMembers(res.data.users);
+                setMembers(res.data.members);
+                setUsers(res.data.users);
+                setTeams(res.data.teams);
+                setDatabaseAvailable(res.data.databaseAvailable);
+                setError(res.data.warning ?? "");
 
             } catch (error) {
                 console.error(error);
+                setDatabaseAvailable(false);
+                setError("Unable to load teams from the server.");
             }
         };
 
         getAllMembers();
-    }, [user]);
-
-    useEffect(() => {
-        console.log("UPDATED MEMBERS:", members);
-    }, [members]);
+    }, [user, apiUrl]);
 
     const removeMember = async (memberId: string, teamId: string) => {
-
-        // Removes a member from a specific team
-
-       try {
+        try {
             setLoading(true);
             setError("");
-
-            const teamSlug = teamId.toLowerCase().replace(/\s+/g, "-");
-
-            // console.log("TEAMID:", teamSlug);
-            // console.log("MEMBERID:", memberId);
-
+            const teamIdentifier = encodeURIComponent(teamId);
             const res = await axios.delete(
-                `${apiUrl}/api/teams/${teamSlug}/${memberId}`
+                `${apiUrl}/api/teams/${teamIdentifier}/${encodeURIComponent(memberId)}`,
+                { withCredentials: true }
             );
 
             setMembers((prev) =>
-                prev.map((member) =>
-                    (member.userID ?? member.memberID) === memberId
-                        ? { ...member, team: "" }
-                        : member
+                prev.filter(
+                    (member) =>
+                        (member.userID ?? member.memberID) !== memberId ||
+                        (member.teamID
+                            ? member.teamID !== res.data.user.teamID
+                            : member.team !== res.data.user.team)
                 )
             );
 
@@ -172,6 +160,12 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                         (member.userID ?? member.memberID) !== memberId
                 )
             );
+            setUsers((prev) =>
+                prev.filter(
+                    (member) =>
+                        (member.userID ?? member.memberID) !== memberId
+                )
+            );
             return true;
         } catch (error) {
             const message = axios.isAxiosError(error)
@@ -185,29 +179,57 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const syncTeam = async(teamName: string) => {
-
-        // Syncs teams across users so that they can get the updated member list in a team
-
+    const syncTeam = async(teamIdentifier: string) => {
         try {
             setLoading(true);
-
-            await axios.get(`${apiUrl}/api/teams/${teamName}`, {
+            const response = await axios.get(`${apiUrl}/api/teams/${encodeURIComponent(teamIdentifier)}`, {
                 withCredentials: true,
-            })
-            .then((res) => {
-                setMembers((prev) => [
-                    ...prev.filter((member) => member.team !== teamName),
-                    ...res.data.members
-                ]);
-                console.log("DONE");
             });
+            const { team, members: teamMembers } = response.data;
+            setMembers((prev) => [
+                ...prev.filter(
+                    (member) =>
+                        member.teamID !== team.id &&
+                        member.team?.toLowerCase() !== team.name.toLowerCase()
+                ),
+                ...teamMembers,
+            ]);
         } catch (error) {
-            console.log(error);
+            console.error("Failed to sync team:", error);
         } finally {
             setLoading(false);
         }
-    }
+    };
+
+    const createTeam = async (
+        name: string,
+        description: string
+    ): Promise<boolean> => {
+        try {
+            setLoading(true);
+            setError("");
+            const response = await axios.post<{ team: Team }>(
+                `${apiUrl}/api/teams`,
+                { name, description },
+                { withCredentials: true }
+            );
+            setTeams((previous) =>
+                [...previous, response.data.team].sort((left, right) =>
+                    left.name.localeCompare(right.name)
+                )
+            );
+            return true;
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to create team."
+                : "Failed to create team.";
+            console.error("Failed to create team:", error);
+            setError(message);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAddMember = async (
         selectedMember: string,
@@ -219,7 +241,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     ) => {
         if (!selectedMember) return;
 
-        const member = members.find(
+        const member = users.find(
             (member) => (member.userID ?? member.memberID) === selectedMember
         );
 
@@ -228,43 +250,56 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         const memberId = member.userID ?? member.memberID;
         if (!memberId) return;
 
-        console.log("Added Member:", member);
-
-        // Connect this to your add-member API next.
-        await axios.post(
-    `${apiUrl}/api/teams/${selectedTeam}/${memberId}`,
-    {
-        role: selectedRole,
-        isLead,
-        isExec,
-        execRole
-    }).then((res) => {
-            console.log(res.data);
-            const newMember = res.data.member;
-            setMembers((prev) =>
-                prev.map((member) =>
-                    (member.userID ?? member.memberID) ===
-                        (newMember.userID ?? newMember.memberID)
-                        ? newMember
-                        : member
+        try {
+            const response = await axios.post(
+                `${apiUrl}/api/teams/${encodeURIComponent(selectedTeam)}/${encodeURIComponent(memberId)}`,
+                { role: selectedRole, isLead, isExec, execRole },
+                { withCredentials: true }
+            );
+            const newMember: Member = response.data.member;
+            setMembers((prev) => [
+                ...prev.filter(
+                    (entry) =>
+                        (entry.userID ?? entry.memberID) !== memberId ||
+                        (entry.teamID && entry.teamID !== newMember.teamID)
+                ),
+                newMember,
+            ]);
+            setUsers((prev) =>
+                prev.map((entry) =>
+                    (entry.userID ?? entry.memberID) === memberId
+                        ? { ...entry, isExec: newMember.isExec, execRole: newMember.execRole }
+                        : entry
                 )
             );
             closeModal();
-        }).catch(err => {
-            console.log(err);
-        })
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to add member."
+                : "Failed to add member.";
+            console.error("Failed to add member:", error);
+            setError(message);
+        }
     };
 
     const handleCreateMember = async (member: NewMemberInput) => {
         try {
             const res = await axios.post<{ member: Member }>(
                 `${apiUrl}/api/teams/${encodeURIComponent(member.team)}/create-member`,
-                member
+                member,
+                { withCredentials: true }
             );
 
             const newMember = res.data.member;
-
-            setMembers(prev => [...prev, newMember]);
+            setMembers((prev) => [
+                ...prev.filter(
+                    (entry) =>
+                        (entry.userID ?? entry.memberID) !== newMember.userID ||
+                        entry.teamID !== newMember.teamID
+                ),
+                newMember,
+            ]);
+            setUsers((prev) => [...prev, newMember]);
 
             closeModal();
 
@@ -302,9 +337,33 @@ export function TeamProvider({ children }: { children: ReactNode }) {
 
             setMembers((prev) =>
                 prev.map((member) =>
-                    (member.userID ?? member.memberID) ===
-                    (updatedMember.userID ?? updatedMember.memberID)
-                        ? updatedMember
+                    (member.userID ?? member.memberID) === updatedMember.userID
+                        ? member.teamID === updatedMember.teamID
+                            ? updatedMember
+                            : {
+                                  ...member,
+                                  name: updatedMember.name,
+                                  email: updatedMember.email,
+                                  githubID: updatedMember.githubID,
+                                  discordID: updatedMember.discordID,
+                                  isExec: updatedMember.isExec,
+                                  execRole: updatedMember.execRole,
+                              }
+                        : member
+                )
+            );
+            setUsers((prev) =>
+                prev.map((member) =>
+                    (member.userID ?? member.memberID) === updatedMember.userID
+                        ? {
+                              ...member,
+                              name: updatedMember.name,
+                              email: updatedMember.email,
+                              githubID: updatedMember.githubID,
+                              discordID: updatedMember.discordID,
+                              isExec: updatedMember.isExec,
+                              execRole: updatedMember.execRole,
+                          }
                         : member
                 )
             );
@@ -329,6 +388,11 @@ export function TeamProvider({ children }: { children: ReactNode }) {
             value={{
                 members,
                 setMembers,
+                users,
+                setUsers,
+                teams,
+                databaseAvailable,
+                createTeam,
                 loading,
                 error,
                 setError,

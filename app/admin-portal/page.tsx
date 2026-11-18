@@ -1,7 +1,6 @@
 "use client";
 
 import "../globals.css";
-import {teams} from "../_data/workerFunctions"
 import TeamSection from "../_components/TeamPage"
 import MemberSection from "../_components/MemberPage"
 import {useEffect, useState} from "react";

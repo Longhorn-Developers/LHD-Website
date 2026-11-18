@@ -6,6 +6,9 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ memberId: string }> }
 ) {
+    const client = await pool.connect();
+    let transactionStarted = false;
+
     try {
         const { memberId } = await params;
         if (!memberId) {
@@ -16,89 +19,80 @@ export async function DELETE(
         }
 
         const token = request.cookies.get("admin_token")?.value;
-        if (!token) {
+        const decoded = token ? await verifyToken(token) : null;
+        if (!decoded || typeof decoded.adminId !== "number") {
             return NextResponse.json(
                 { message: "Unauthorized" },
                 { status: 401 }
             );
         }
 
-        const decoded = await verifyToken(token);
-        if (!decoded) {
-            return NextResponse.json(
-                { message: "Unauthorized" },
-                { status: 401 }
-            );
-        }
+        await client.query("BEGIN");
+        transactionStarted = true;
 
-        const actorResult = await pool.query(
-            `SELECT "userID", team, role, "isLead", "isExec"
+        const actorResult = await client.query(
+            `SELECT id, "userID", "isExec"
              FROM users
-             WHERE id = $1`,
+             WHERE id = $1
+             FOR UPDATE`,
             [decoded.adminId]
         );
         const actor = actorResult.rows[0];
-        if (!actor) {
+        if (!actor || actor.isExec !== true) {
+            await client.query("ROLLBACK");
+            transactionStarted = false;
             return NextResponse.json(
-                { message: "Unauthorized" },
-                { status: 401 }
-            );
-        }
-
-        const targetResult = await pool.query(
-            `SELECT "userID", team, role, "isLead", "isExec"
-             FROM users
-             WHERE "userID" = $1`,
-            [memberId]
-        );
-        const target = targetResult.rows[0];
-        if (!target) {
-            return NextResponse.json(
-                { message: "Member not found" },
-                { status: 404 }
-            );
-        }
-
-        const isAuthorizedLead =
-            actor.isLead === true &&
-            typeof actor.team === "string" &&
-            typeof target.team === "string" &&
-            actor.team.toLowerCase() === target.team.toLowerCase() &&
-            actor.role === target.role &&
-            target.isExec !== true &&
-            target.isLead !== true;
-        const isAuthorized =
-            actor.userID !== memberId &&
-            typeof target.team === "string" &&
-            Boolean(target.team.trim()) &&
-            (actor.isExec === true || isAuthorizedLead);
-
-        if (!isAuthorized) {
-            return NextResponse.json(
-                { message: "You are not authorized to delete this member" },
+                { message: "Only executives can permanently delete a member." },
                 { status: 403 }
             );
         }
 
-        const result = await pool.query(
-            `DELETE FROM users
+        const targetResult = await client.query(
+            `SELECT id, "userID"
+             FROM users
              WHERE "userID" = $1
-             RETURNING "userID"`,
+             FOR UPDATE`,
             [memberId]
         );
-
-        if (result.rowCount === 0) {
+        const target = targetResult.rows[0];
+        if (!target) {
+            await client.query("ROLLBACK");
+            transactionStarted = false;
             return NextResponse.json(
                 { message: "Member not found" },
                 { status: 404 }
             );
         }
 
+        if (actor.userID === target.userID) {
+            await client.query("ROLLBACK");
+            transactionStarted = false;
+            return NextResponse.json(
+                { message: "You cannot delete your own account." },
+                { status: 403 }
+            );
+        }
+
+        await client.query(
+            `DELETE FROM team_members WHERE user_id = $1`,
+            [target.id]
+        );
+        await client.query(
+            `DELETE FROM users WHERE id = $1`,
+            [target.id]
+        );
+
+        await client.query("COMMIT");
+        transactionStarted = false;
         return NextResponse.json(
             { message: "Member permanently deleted" },
             { status: 200 }
         );
     } catch (error) {
+        if (transactionStarted) {
+            await client.query("ROLLBACK");
+        }
+
         if (
             typeof error === "object" &&
             error !== null &&
@@ -119,5 +113,7 @@ export async function DELETE(
             { message: "Failed to delete member" },
             { status: 500 }
         );
+    } finally {
+        client.release();
     }
 }

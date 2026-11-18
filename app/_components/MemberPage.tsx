@@ -8,7 +8,6 @@ import { useTeam } from "../context/TeamContext";
 import { useAuth } from "../context/AuthContext";
 import {
     canEditTeamMember,
-    canRemoveTeamMember,
 } from "@/lib/teamPermissions";
 import { sortMembersForCurrentUser } from "@/lib/sortMembersForCurrentUser";
 
@@ -96,7 +95,7 @@ export default function MemberSection() {
 
         const saved = await handleUpdateMember(
             memberId,
-            editingMember.team,
+            editingMember.teamID ?? editingMember.team,
             editForm.role,
             editForm.isLead,
             editForm.isExec,
@@ -226,21 +225,33 @@ export default function MemberSection() {
                             <tbody>
                                 {filteredMembers.length > 0 ? (
                                     filteredMembers.map((member) => {
+                                        const actorMembership = members.find(
+                                            (candidate) =>
+                                                (candidate.userID ??
+                                                    candidate.memberID) ===
+                                                    (user?.userID ??
+                                                        user?.memberID) &&
+                                                (candidate.teamID ===
+                                                    member.teamID ||
+                                                    (!candidate.teamID &&
+                                                        candidate.team ===
+                                                            member.team))
+                                        );
+                                        const actor = user?.isExec
+                                            ? user
+                                            : actorMembership ?? null;
                                         const canEdit = canEditTeamMember(
-                                            user,
+                                            actor,
                                             member
                                         );
-                                        const canDelete = canRemoveTeamMember(
-                                            user,
-                                            member
-                                        );
+                                        const canDelete =
+                                            user?.isExec === true &&
+                                            member.userID !== user.userID;
 
                                         return (
                                             <tr
                                                 key={
-                                                    member.userID ??
-                                                    member.memberID ??
-                                                    member.email
+                                                    `${member.userID ?? member.memberID ?? member.email}:${member.teamID ?? "unassigned"}`
                                                 }
                                             >
                                                 <th scope="row">{member.name}</th>
@@ -267,10 +278,11 @@ export default function MemberSection() {
                                                         </span>
                                                     )}
                                                 </td>
-                                                {canManageMembers && (
+                                                {canManageMembers &&
+                                                    (canEdit || canDelete) && (
                                                     <td>
+                                                        <div className="flex flex-wrap gap-2">
                                                         {canEdit && (
-                                                            <div className="flex flex-wrap gap-2">
                                                                 <button
                                                                     type="button"
                                                                     className="row-action-button edit-button cursor-pointer"
@@ -282,22 +294,22 @@ export default function MemberSection() {
                                                                 >
                                                                     Edit
                                                                 </button>
-                                                                {canDelete && (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="row-action-button remove-button cursor-pointer"
-                                                                        disabled={loading}
-                                                                        onClick={() =>
-                                                                            openDeleteConfirmation(
-                                                                                member
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        Delete
-                                                                    </button>
-                                                                )}
-                                                            </div>
                                                         )}
+                                                        {canDelete && (
+                                                            <button
+                                                                type="button"
+                                                                className="row-action-button remove-button cursor-pointer"
+                                                                disabled={loading}
+                                                                onClick={() =>
+                                                                    openDeleteConfirmation(
+                                                                        member
+                                                                    )
+                                                                }
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        )}
+                                                        </div>
                                                     </td>
                                                 )}
                                             </tr>

@@ -16,7 +16,19 @@ export async function POST(req: NextRequest) {
 
         // 1. Find user by email
         const user = await pool.query(
-            "SELECT * FROM users WHERE email = $1",
+            `SELECT
+                u.id,
+                u.email,
+                u."isExec",
+                EXISTS (
+                    SELECT 1
+                    FROM team_members tm
+                    WHERE tm.user_id = u.id
+                      AND tm.islead = TRUE
+                      AND tm.dateleft IS NULL
+                ) AS "hasLeadMembership"
+             FROM users u
+             WHERE LOWER(u.email) = LOWER($1)`,
             [email]
         );
 
@@ -30,7 +42,7 @@ export async function POST(req: NextRequest) {
 
         const admin = user.rows[0];
 
-        if (!admin.isLead && !admin.isExec) {
+        if (!admin.hasLeadMembership && !admin.isExec) {
             // User is not a lead or exec
             return NextResponse.json({
                 "msg": "User is not authorized to access admin portal"

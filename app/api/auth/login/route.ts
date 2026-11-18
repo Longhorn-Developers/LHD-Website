@@ -78,24 +78,36 @@ export async function POST(request: NextRequest) {
 
         const user = await pool.query(
             `SELECT
-                id,
-                name,
-                "memberID",
-                "userID",
-                email,
-                password,
-                "githubID",
-                "discordID",
-                status,
-                "dateJoined",
-                "dateLeft",
-                team,
-                role,
-                "isLead",
-                "isExec",
-                "execRole"
-             FROM users
-             WHERE email = $1`,
+                u.id,
+                u.name,
+                u."memberID",
+                u."userID",
+                u.email,
+                u.password,
+                u."githubID",
+                u."discordID",
+                COALESCE(tm.status, u.status) AS status,
+                COALESCE(tm.datejoined, u."dateJoined") AS "dateJoined",
+                tm.dateleft AS "dateLeft",
+                t.name AS team,
+                t.id::text AS "teamID",
+                tm.id::text AS "membershipID",
+                tm.role,
+                COALESCE(tm.islead, FALSE) AS "isLead",
+                u."isExec",
+                u."execRole"
+             FROM users u
+             LEFT JOIN LATERAL (
+                SELECT tm.status, tm.datejoined, tm.dateleft, tm.role,
+                       tm.islead, tm.team_id, tm.id
+                FROM team_members tm
+                WHERE tm.user_id = u.id
+                  AND tm.dateleft IS NULL
+                ORDER BY tm.islead DESC, tm.datejoined ASC, tm.id ASC
+                LIMIT 1
+             ) tm ON TRUE
+             LEFT JOIN teams t ON t.id = tm.team_id
+             WHERE LOWER(u.email) = LOWER($1)`,
             [email]
         );
         

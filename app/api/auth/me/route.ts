@@ -25,22 +25,34 @@ export async function GET(request: NextRequest) {
 
     const result = await pool.query(
       `SELECT
-        name,
-        email,
-        "memberID",
-        "userID",
-        "githubID",
-        "discordID",
-        status,
-        "dateJoined",
-        "dateLeft",
-        team,
-        role,
-        "isLead",
-        "isExec",
-        "execRole"
-      FROM users
-      WHERE id = $1`,
+        u.name,
+        u.email,
+        u."memberID",
+        u."userID",
+        u."githubID",
+        u."discordID",
+        COALESCE(tm.status, u.status) AS status,
+        COALESCE(tm.datejoined, u."dateJoined") AS "dateJoined",
+        tm.dateleft AS "dateLeft",
+        t.name AS team,
+        t.id::text AS "teamID",
+        tm.id::text AS "membershipID",
+        tm.role,
+        COALESCE(tm.islead, FALSE) AS "isLead",
+        u."isExec",
+        u."execRole"
+      FROM users u
+      LEFT JOIN LATERAL (
+        SELECT tm.status, tm.datejoined, tm.dateleft, tm.role,
+               tm.islead, tm.team_id, tm.id
+        FROM team_members tm
+        WHERE tm.user_id = u.id
+          AND tm.dateleft IS NULL
+        ORDER BY tm.islead DESC, tm.datejoined ASC, tm.id ASC
+        LIMIT 1
+      ) tm ON TRUE
+      LEFT JOIN teams t ON t.id = tm.team_id
+      WHERE u.id = $1`,
       [decoded.adminId]
     );
 
@@ -63,6 +75,8 @@ export async function GET(request: NextRequest) {
       dateJoined: row.dateJoined,
       dateLeft: row.dateLeft,
       team: row.team,
+      teamID: row.teamID,
+      membershipID: row.membershipID,
       role: row.role,
       isLead: row.isLead,
       isExec: row.isExec,

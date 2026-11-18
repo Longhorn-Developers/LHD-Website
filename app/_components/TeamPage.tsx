@@ -1,7 +1,7 @@
 "use client";
 
 import "./AdminPortalStyles.css";
-import { teams, type Member } from "../_data/workerFunctions";
+import type { Member } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
@@ -11,7 +11,7 @@ import {
     canRemoveTeamMember,
 } from "@/lib/teamPermissions";
 import { sortMembersForCurrentUser } from "@/lib/sortMembersForCurrentUser";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import Fuse from "fuse.js"; 
 
 
@@ -19,18 +19,28 @@ export default function TeamSection() {
     const [query, setQuery] = useState("");
     const [selectedModalTeam, setSelectedModalTeam] = useState("");
     const [editingMember, setEditingMember] = useState<Member | null>(null);
+    const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+    const [newTeamName, setNewTeamName] = useState("");
+    const [newTeamDescription, setNewTeamDescription] = useState("");
     const { activeModal, openModal, closeModal } = useModal();
-    const { setError } = useTeam();
+    const {
+        setError,
+        teams,
+        createTeam,
+        loading,
+        error,
+        databaseAvailable,
+    } = useTeam();
+    const { user } = useAuth();
 
     // Convert teams into searchable objects
     const teamList = useMemo(() => {
-        return Object.entries(teams).map(([id, teamName]) => ({
-            id,
-            teamName
+        return teams.map((team) => ({
+            id: team.id,
+            slug: team.slug,
+            teamName: team.name,
         }));
-    }, []);
-
-    console.log(teamList);
+    }, [teams]);
 
     // Initialize Fuse
     const fuse = useMemo(() => {
@@ -74,7 +84,22 @@ export default function TeamSection() {
         closeModal();
     };
 
-    console.log(matchingTeams);
+    const submitNewTeam = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!newTeamName.trim()) {
+            return;
+        }
+
+        const created = await createTeam(
+            newTeamName.trim(),
+            newTeamDescription.trim()
+        );
+        if (created) {
+            setIsCreateTeamOpen(false);
+            setNewTeamName("");
+            setNewTeamDescription("");
+        }
+    };
 
     return (
         <main className="team-page">
@@ -123,17 +148,43 @@ export default function TeamSection() {
                     </div>
                 </header>
 
-                <div className="team-results-count" aria-live="polite">
-                    {matchingTeams.length}{" "}
-                    {matchingTeams.length === 1 ? "team" : "teams"}
+                {!databaseAvailable && teams.length > 0 && (
+                    <p
+                        role="status"
+                        className="mt-4 rounded-lg border border-[#f0dfd1] bg-[#fff7f0] px-4 py-3 text-sm text-[#7a3900]"
+                    >
+                        Database unavailable. Showing development defaults;
+                        team and member changes are disabled.
+                    </p>
+                )}
+
+                <div className="flex items-center justify-between gap-4">
+                    <div className="team-results-count" aria-live="polite">
+                        {matchingTeams.length}{" "}
+                        {matchingTeams.length === 1 ? "team" : "teams"}
+                    </div>
+                    {user?.isExec && databaseAvailable && (
+                        <button
+                            type="button"
+                            className="action-button action-button-primary cursor-pointer"
+                            onClick={() => {
+                                setError("");
+                                setIsCreateTeamOpen(true);
+                            }}
+                        >
+                            Add Team
+                        </button>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {matchingTeams.map(({ id, teamName }) => (
+                    {matchingTeams.map(({ id, slug, teamName }) => (
                         <TeamBlock
                             key={id}
                             teamName={teamName}
                             teamID={id}
+                            teamSlug={slug}
+                            databaseAvailable={databaseAvailable}
                             onAddMember={openAddMemberModal}
                             onEditMember={openEditMemberModal}
                         />
@@ -155,6 +206,107 @@ export default function TeamSection() {
                     editingMember={editingMember}
                 />
             )}
+
+            {isCreateTeamOpen && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#211a16]/60 p-4 backdrop-blur-sm">
+                    <form
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="create-team-title"
+                        onSubmit={submitNewTeam}
+                        className="w-full max-w-lg overflow-hidden rounded-2xl border border-[#e7e2dc] bg-white shadow-2xl"
+                    >
+                        <div className="flex items-center justify-between bg-[#BF5700] px-6 py-5">
+                            <div>
+                                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/75">
+                                    Longhorn Developers
+                                </p>
+                                <h2
+                                    id="create-team-title"
+                                    className="text-xl font-bold text-white"
+                                >
+                                    Add a team
+                                </h2>
+                            </div>
+                            <button
+                                type="button"
+                                aria-label="Close add team dialog"
+                                onClick={() => {
+                                    setIsCreateTeamOpen(false);
+                                    setError("");
+                                }}
+                                className="flex h-9 w-9 items-center justify-center rounded-full text-xl text-white/90 transition hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="space-y-4 p-6">
+                            <div>
+                                <label
+                                    htmlFor="new-team-name"
+                                    className="mb-2 block text-sm font-semibold text-gray-700"
+                                >
+                                    Team name
+                                </label>
+                                <input
+                                    id="new-team-name"
+                                    type="text"
+                                    required
+                                    autoFocus
+                                    maxLength={120}
+                                    value={newTeamName}
+                                    onChange={(event) =>
+                                        setNewTeamName(event.target.value)
+                                    }
+                                    className="w-full rounded-lg border border-[#d6d3d1] bg-white px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/15"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="new-team-description"
+                                    className="mb-2 block text-sm font-semibold text-gray-700"
+                                >
+                                    Description <span className="font-normal">(optional)</span>
+                                </label>
+                                <textarea
+                                    id="new-team-description"
+                                    rows={3}
+                                    value={newTeamDescription}
+                                    onChange={(event) =>
+                                        setNewTeamDescription(event.target.value)
+                                    }
+                                    className="w-full resize-y rounded-lg border border-[#d6d3d1] bg-white px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-[#BF5700] focus:ring-2 focus:ring-[#BF5700]/15"
+                                />
+                            </div>
+                            {error && (
+                                <p role="alert" className="text-sm text-red-600">
+                                    {error}
+                                </p>
+                            )}
+                            <div className="flex justify-end gap-3 border-t border-[#eee9e3] pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsCreateTeamOpen(false);
+                                        setError("");
+                                    }}
+                                    className="rounded-lg border border-[#d6d3d1] bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-[#BF5700] hover:bg-[#fff7f0] hover:text-[#9a4600]"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading || !newTeamName.trim()}
+                                    className="rounded-lg bg-[#BF5700] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#9a4600] disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    {loading ? "Creating..." : "Create Team"}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            )}
         </main>
     );
 }
@@ -162,32 +314,46 @@ export default function TeamSection() {
 function TeamBlock({
     teamName,
     teamID,
+    teamSlug,
+    databaseAvailable,
     onAddMember,
     onEditMember,
 }: {
     teamName: string;
     teamID: string;
+    teamSlug: string;
+    databaseAvailable: boolean;
     onAddMember: (teamName: string) => void;
     onEditMember: (teamName: string, member: Member) => void;
 }) {
     const { user } = useAuth();
     const currentUserId = user?.userID ?? user?.memberID;
-    const isLeadOrExec = Boolean(
-        user?.isExec || (user?.team === teamName && user.isLead)
-    );
     const { members, syncTeam } = useTeam();
+    const currentTeamMembership = members.find(
+        (member) =>
+            currentUserId &&
+            (member.userID ?? member.memberID) === currentUserId &&
+            (member.teamID === teamID ||
+                (!member.teamID &&
+                    member.team?.toLowerCase() === teamName.toLowerCase()))
+    );
+    const isLeadOrExec = Boolean(
+        user?.isExec || currentTeamMembership?.isLead
+    );
     const hasCurrentUserInTeam = Boolean(
         currentUserId &&
-            members.some(
-                (member) =>
-                    member.team === teamName &&
-                    (member.userID ?? member.memberID) === currentUserId
-            )
+            currentTeamMembership
     );
     const teamMembers = sortMembersForCurrentUser(
-        members.filter((member) => member.team === teamName),
+        members.filter(
+            (member) =>
+                member.teamID === teamID ||
+                (!member.teamID &&
+                    member.team?.toLowerCase() === teamName.toLowerCase())
+        ),
         user
     );
+    const actor = user?.isExec ? user : currentTeamMembership ?? user;
 
     function capitalizeFirstLetter(value: string): string {
         if (!value) return value;
@@ -198,7 +364,7 @@ function TeamBlock({
         <section className="team-block">
             <div className="team-block-header">
                 <h2 className="team-block-title">{teamName}</h2>
-                <span className="team-id-badge">{teamID}</span>
+                <span className="team-id-badge">{teamSlug}</span>
             </div>
             <div className="team-table-wrap">
                 <table className="data-table">
@@ -229,9 +395,9 @@ function TeamBlock({
                                 const isCurrentUser = Boolean(
                                     memberId && memberId === currentUserId
                                 );
-                                const canEdit = canEditTeamMember(user, member);
+                                const canEdit = canEditTeamMember(actor, member);
                                 const canRemove = canRemoveTeamMember(
-                                    user,
+                                    actor,
                                     member
                                 );
 
@@ -275,7 +441,7 @@ function TeamBlock({
 
             <div className="team-card-footer">
                 <div className="flex flex-row flex-wrap gap-3">
-                    {isLeadOrExec && (
+                    {databaseAvailable && isLeadOrExec && (
                         <button
                             className="action-button action-button-primary cursor-pointer"
                             onClick={() => onAddMember(teamName)}
@@ -284,14 +450,16 @@ function TeamBlock({
                         </button>
                     )}
 
-                    <button
-                        className="action-button action-button-secondary cursor-pointer"
-                        onClick={() => syncTeam(teamName)}
-                    >
-                        <p>Sync Team</p>
-                    </button>
+                    {databaseAvailable && (
+                        <button
+                            className="action-button action-button-secondary cursor-pointer"
+                            onClick={() => syncTeam(teamID)}
+                        >
+                            <p>Sync Team</p>
+                        </button>
+                    )}
 
-                    {isLeadOrExec && (
+                    {databaseAvailable && isLeadOrExec && (
                         <button className="action-button action-button-danger cursor-pointer">
                             <p>Remove Team</p>
                         </button>
