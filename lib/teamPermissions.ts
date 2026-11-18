@@ -24,8 +24,5 @@ export function canRemoveTeamMember(
     actor: Member | null,
     target: Member
 ): boolean {
-    return (
-        canEditTeamMember(actor, target) &&
-        (actor?.isExec === true || actor?.role === target.role)
-    );
+    return canEditTeamMember(actor, target);
 }

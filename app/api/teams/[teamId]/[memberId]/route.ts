@@ -458,7 +458,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         const isSelf = actor.userID === memberId;
         const isAuthorizedLead =
             actor.isLead === true &&
-            actor.role === target.role &&
             target.isExec !== true &&
             target.isLead !== true;
         if (!isSelf && actor.isExec !== true && !isAuthorizedLead) {
