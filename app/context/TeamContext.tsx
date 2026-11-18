@@ -46,7 +46,19 @@ interface TeamContextType {
     error: string;
     setError: React.Dispatch<React.SetStateAction<string>>;
     deleteMember: (memberId: string) => Promise<boolean>;
-    removeMember: (memberId: string, teamId: string) => Promise<void>;
+    removeMember: (memberId: string, teamId: string) => Promise<boolean>;
+    addMemberToTeam: (
+        memberId: string,
+        teamId: string,
+        role: string,
+        isLead: boolean,
+        isExec: boolean,
+        execRole: string
+    ) => Promise<Member | null>;
+    updateMemberAccount: (
+        memberId: string,
+        contactInfo: MemberContactUpdate
+    ) => Promise<boolean>;
     syncTeam: (teamId: string) => void;
     handleAddMember: (
         selectedMember: string,
@@ -109,7 +121,10 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         getAllMembers();
     }, [user, apiUrl]);
 
-    const removeMember = async (memberId: string, teamId: string) => {
+    const removeMember = async (
+        memberId: string,
+        teamId: string
+    ): Promise<boolean> => {
         try {
             setLoading(true);
             setError("");
@@ -119,19 +134,46 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                 { withCredentials: true }
             );
 
-            setMembers((prev) =>
-                prev.filter(
+            setMembers((prev) => {
+                const remaining = prev.filter(
                     (member) =>
                         (member.userID ?? member.memberID) !== memberId ||
                         (member.teamID
                             ? member.teamID !== res.data.user.teamID
                             : member.team !== res.data.user.team)
-                )
-            );
+                );
+                if (
+                    remaining.some(
+                        (member) =>
+                            (member.userID ?? member.memberID) === memberId
+                    )
+                ) {
+                    return remaining;
+                }
+
+                const account = prev.find(
+                    (member) =>
+                        (member.userID ?? member.memberID) === memberId
+                );
+                return account
+                    ? [
+                          ...remaining,
+                          {
+                              ...account,
+                              team: null,
+                              teamID: null,
+                              membershipID: null,
+                              isLead: false,
+                              status: account.accountStatus ?? account.status,
+                          },
+                      ]
+                    : remaining;
+            });
 
             if (user && (user.userID ?? user.memberID) === memberId) {
                 router.refresh();
             }
+            return true;
 
         } catch (err) {
             console.error(
@@ -140,6 +182,94 @@ export function TeamProvider({ children }: { children: ReactNode }) {
             );
 
             setError("Failed to remove member.");
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const addMemberToTeam = async (
+        memberId: string,
+        teamId: string,
+        role: string,
+        isLead: boolean,
+        isExec: boolean,
+        execRole: string
+    ): Promise<Member | null> => {
+        try {
+            setLoading(true);
+            setError("");
+            const response = await axios.post<{ member: Member }>(
+                `${apiUrl}/api/teams/${encodeURIComponent(teamId)}/${encodeURIComponent(memberId)}`,
+                {
+                    role,
+                    isLead,
+                    isExec,
+                    execRole,
+                },
+                { withCredentials: true }
+            );
+            const newMembership = response.data.member;
+            setMembers((previous) => [
+                ...previous.filter(
+                    (member) =>
+                        (member.userID ?? member.memberID) !== memberId ||
+                        member.teamID !== newMembership.teamID
+                ),
+                newMembership,
+            ]);
+            return newMembership;
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to add team membership."
+                : "Failed to add team membership.";
+            console.error("Failed to add team membership:", error);
+            setError(message);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateMemberAccount = async (
+        memberId: string,
+        contactInfo: MemberContactUpdate
+    ): Promise<boolean> => {
+        try {
+            setLoading(true);
+            setError("");
+            const response = await axios.put<{
+                member: Pick<
+                    Member,
+                    "userID" | "email" | "githubID" | "discordID"
+                >;
+            }>(
+                `${apiUrl}/api/members/${encodeURIComponent(memberId)}`,
+                contactInfo,
+                { withCredentials: true }
+            );
+            const updatedMember = response.data.member;
+            const updateAccount = (previous: Member[]) =>
+                previous.map((member) =>
+                    (member.userID ?? member.memberID) === memberId
+                        ? {
+                              ...member,
+                              email: updatedMember.email,
+                              githubID: updatedMember.githubID,
+                              discordID: updatedMember.discordID,
+                          }
+                        : member
+                );
+            setMembers(updateAccount);
+            setUsers(updateAccount);
+            return true;
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Failed to update member."
+                : "Failed to update member.";
+            console.error("Failed to update member account:", error);
+            setError(message);
+            return false;
         } finally {
             setLoading(false);
         }
@@ -433,6 +563,8 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                 setError,
                 deleteMember,
                 removeMember,
+                addMemberToTeam,
+                updateMemberAccount,
                 syncTeam,
                 handleAddMember,
                 handleCreateMember,

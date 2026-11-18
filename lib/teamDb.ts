@@ -26,6 +26,7 @@ export const memberSelectFields = `
     u.email,
     u."githubID",
     u."discordID",
+    u.status AS "accountStatus",
     COALESCE(tm.status, u.status) AS status,
     COALESCE(tm.datejoined, u."dateJoined") AS "dateJoined",
     tm.dateleft AS "dateLeft",

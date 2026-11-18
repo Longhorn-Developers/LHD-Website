@@ -13,6 +13,7 @@ export type Member = {
     isLead: boolean;
     isExec?: boolean;
     execRole?: string | null;
+    accountStatus?: string | null;
     dateJoined?: Date | string;
     dateLeft?: Date | string | null;
 }

@@ -15,6 +15,7 @@ export function canEditTeamMember(
         actor.isExec === true ||
         (actor.isLead === true &&
             actor.team === target.team &&
+            actor.role == target.role && 
             target.isExec !== true &&
             target.isLead !== true)
     );

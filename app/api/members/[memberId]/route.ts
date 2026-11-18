@@ -2,6 +2,100 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import pool from "@/lib/db";
 
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: Promise<{ memberId: string }> }
+) {
+    try {
+        const { memberId } = await params;
+        if (!memberId) {
+            return NextResponse.json(
+                { message: "Member ID missing." },
+                { status: 400 }
+            );
+        }
+        const token = request.cookies.get("admin_token")?.value;
+        const decoded = token ? await verifyToken(token) : null;
+        if (!decoded || typeof decoded.adminId !== "number") {
+            return NextResponse.json(
+                { message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const actor = await pool.query(
+            `SELECT "isExec" FROM users WHERE id = $1`,
+            [decoded.adminId]
+        );
+        if (actor.rows[0]?.isExec !== true) {
+            return NextResponse.json(
+                { message: "Only executives can update account details." },
+                { status: 403 }
+            );
+        }
+
+        const { email, githubID, discordID } = await request.json();
+        if (
+            typeof email !== "string" ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+            typeof githubID !== "string" ||
+            typeof discordID !== "string"
+        ) {
+            return NextResponse.json(
+                { message: "Invalid member details." },
+                { status: 400 }
+            );
+        }
+
+        const duplicateEmail = await pool.query(
+            `SELECT 1
+             FROM users
+             WHERE LOWER(email) = LOWER($1)
+               AND "userID" <> $2`,
+            [email.trim(), memberId]
+        );
+        if (duplicateEmail.rows.length > 0) {
+            return NextResponse.json(
+                { message: "Email is already in use." },
+                { status: 409 }
+            );
+        }
+
+        const updated = await pool.query(
+            `UPDATE users
+             SET email = $1, "githubID" = $2, "discordID" = $3
+             WHERE "userID" = $4
+             RETURNING "userID", email, "githubID", "discordID"`,
+            [
+                email.trim(),
+                githubID.trim() || null,
+                discordID.trim() || null,
+                memberId,
+            ]
+        );
+        if (updated.rows.length === 0) {
+            return NextResponse.json(
+                { message: "Member not found." },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(
+            {
+                message: "Member account updated successfully.",
+                member: updated.rows[0],
+            },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error("Update member account error:", error);
+        return NextResponse.json(
+            { message: "Failed to update member account." },
+            { status: 500 }
+        );
+    }
+}
+
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ memberId: string }> }
