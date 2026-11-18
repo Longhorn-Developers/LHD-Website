@@ -41,6 +41,7 @@ interface TeamContextType {
     teams: Team[];
     databaseAvailable: boolean;
     createTeam: (name: string, description: string) => Promise<boolean>;
+    removeTeam: (teamId: string) => Promise<boolean>;
     loading: boolean;
     error: string;
     setError: React.Dispatch<React.SetStateAction<string>>;
@@ -231,6 +232,39 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const removeTeam = async (teamId: string): Promise<boolean> => {
+        try {
+            setLoading(true);
+            setError("");
+            const response = await axios.delete<{ team: Team }>(
+                `${apiUrl}/api/teams/${encodeURIComponent(teamId)}`,
+                { withCredentials: true }
+            );
+            const removedTeam = response.data.team;
+            setTeams((previous) =>
+                previous.filter((team) => team.id !== removedTeam.id)
+            );
+            setMembers((previous) =>
+                previous.filter(
+                    (member) =>
+                        member.teamID !== removedTeam.id &&
+                        member.team?.toLowerCase() !==
+                            removedTeam.name.toLowerCase()
+                )
+            );
+            return true;
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.error ?? "Failed to remove team."
+                : "Failed to remove team.";
+            console.error("Failed to remove team:", error);
+            setError(message);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleAddMember = async (
         selectedMember: string,
         selectedTeam: string,
@@ -393,6 +427,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
                 teams,
                 databaseAvailable,
                 createTeam,
+                removeTeam,
                 loading,
                 error,
                 setError,

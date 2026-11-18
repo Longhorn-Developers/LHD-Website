@@ -1,11 +1,12 @@
 "use client";
 
 import "./AdminPortalStyles.css";
-import type { Member } from "../_data/workerFunctions";
+import type { Member, Team } from "../_data/workerFunctions";
 import { useAuth } from "../context/AuthContext";
 import { useTeam } from "../context/TeamContext";
 import { useModal } from "../context/ModalContext";
 import MemberModal from "./MemberModal";
+import ConfirmationModal from "./ConfirmationModal";
 import {
     canEditTeamMember,
     canRemoveTeamMember,
@@ -19,6 +20,7 @@ export default function TeamSection() {
     const [query, setQuery] = useState("");
     const [selectedModalTeam, setSelectedModalTeam] = useState("");
     const [editingMember, setEditingMember] = useState<Member | null>(null);
+    const [teamToRemove, setTeamToRemove] = useState<Team | null>(null);
     const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
     const [newTeamName, setNewTeamName] = useState("");
     const [newTeamDescription, setNewTeamDescription] = useState("");
@@ -27,6 +29,7 @@ export default function TeamSection() {
         setError,
         teams,
         createTeam,
+        removeTeam,
         loading,
         error,
         databaseAvailable,
@@ -82,6 +85,16 @@ export default function TeamSection() {
     const closeMemberModal = () => {
         setEditingMember(null);
         closeModal();
+    };
+
+    const confirmRemoveTeam = async () => {
+        if (!teamToRemove) {
+            return;
+        }
+
+        if (await removeTeam(teamToRemove.id)) {
+            setTeamToRemove(null);
+        }
     };
 
     const submitNewTeam = async (event: FormEvent<HTMLFormElement>) => {
@@ -187,6 +200,12 @@ export default function TeamSection() {
                             databaseAvailable={databaseAvailable}
                             onAddMember={openAddMemberModal}
                             onEditMember={openEditMemberModal}
+                            onRemoveTeam={() => {
+                                setError("");
+                                setTeamToRemove(
+                                    teams.find((team) => team.id === id) ?? null
+                                );
+                            }}
                         />
                     ))}
                 </div>
@@ -307,6 +326,23 @@ export default function TeamSection() {
                     </form>
                 </div>
             )}
+
+            {teamToRemove && (
+                <ConfirmationModal
+                    title="Remove team?"
+                    message={`This permanently removes ${teamToRemove.name} and its team memberships. User accounts will remain.`}
+                    confirmLabel="Remove Team"
+                    isLoading={loading}
+                    errorMessage={error}
+                    onConfirm={confirmRemoveTeam}
+                    onCancel={() => {
+                        if (!loading) {
+                            setTeamToRemove(null);
+                            setError("");
+                        }
+                    }}
+                />
+            )}
         </main>
     );
 }
@@ -318,6 +354,7 @@ function TeamBlock({
     databaseAvailable,
     onAddMember,
     onEditMember,
+    onRemoveTeam,
 }: {
     teamName: string;
     teamID: string;
@@ -325,6 +362,7 @@ function TeamBlock({
     databaseAvailable: boolean;
     onAddMember: (teamName: string) => void;
     onEditMember: (teamName: string, member: Member) => void;
+    onRemoveTeam: () => void;
 }) {
     const { user } = useAuth();
     const currentUserId = user?.userID ?? user?.memberID;
@@ -459,8 +497,11 @@ function TeamBlock({
                         </button>
                     )}
 
-                    {databaseAvailable && isLeadOrExec && (
-                        <button className="action-button action-button-danger cursor-pointer">
+                    {databaseAvailable && user?.isExec && (
+                        <button
+                            className="action-button action-button-danger cursor-pointer"
+                            onClick={onRemoveTeam}
+                        >
                             <p>Remove Team</p>
                         </button>
                     )}
