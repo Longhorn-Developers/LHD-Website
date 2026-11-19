@@ -16,7 +16,7 @@ export default function AdminPortal() {
 
     useEffect(() => {
       if (!loading && !isAuthenticated) {
-        router.replace('/admin-login');
+        router.replace('/admin-portal/login');
       }
     }, [loading, isAuthenticated, router]);
 

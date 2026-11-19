@@ -39,7 +39,7 @@ const InvalidResetLink = () => {
 
         <button
             type="button"
-            onClick={() => router.push("/admin-login/forgot-password")}
+            onClick={() => router.push("/admin-portal/login/forgot-password")}
             className="w-full h-12 mt-7 bg-[#BF5700] hover:bg-[#9a4600] text-white font-semibold rounded-md transition cursor-pointer"
         >
             Request New Reset Link
@@ -47,7 +47,7 @@ const InvalidResetLink = () => {
 
         <button
             type="button"
-            onClick={() => router.push("/admin-login")}
+            onClick={() => router.push("/admin-portal/login")}
             className="mt-5 text-sm font-medium text-[#BF5700] hover:text-[#9a4600] transition cursor-pointer"
         >
             Back to Login

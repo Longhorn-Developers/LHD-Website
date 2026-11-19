@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
             [hashedToken, expiresAt, email]
         );
         // 4. Email reset link to user
-        const resetLink = `${process.env.NEXT_PUBLIC_API_KEY}/admin-login/reset-password?token=${resetToken}`;
+        const resetLink = `${process.env.NEXT_PUBLIC_API_KEY}/admin-portal/login/reset-password?token=${resetToken}`;
         console.log(resetLink);
 
         await transporter.sendMail({
