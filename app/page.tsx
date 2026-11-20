@@ -114,7 +114,7 @@ export default function Home() {
           <a href="#" className="text-xs text-charcoal">See all projects ↗</a>
         </div>
         <ul className="mt-7 grid grid-cols-1 gap-4 xl:grid-cols-12">
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7">
+          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight tracking-tight">UT Registration Plus</h3>
               <p className="mt-1 text-base leading-tight text-charcoal/80">Stay on top of registration</p>
@@ -150,7 +150,7 @@ export default function Home() {
               />
             </div>
           </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5">
+          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Mobilize UT</h3>
               <p className="mt-1 text-base text-charcoal/80">Accessibility, made easy</p>
@@ -193,7 +193,7 @@ export default function Home() {
               </span>
             </div>
           </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5">
+          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Pet Bevo</h3>
               <p className="mt-1 text-base text-charcoal/80">Lock in with Bevo</p>
@@ -220,7 +220,7 @@ export default function Home() {
               </span>
             </div>
           </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7">
+          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Longhorn Loop</h3>
               <p className="mt-1 text-base text-charcoal/80">Stay in the loop</p>

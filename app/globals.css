@@ -31,6 +31,32 @@ body {
   color: #1f1f1f;
 }
 
+@keyframes not-found-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -18px;
+  }
+}
+
+.not-found-float {
+  animation: not-found-float 4.5s ease-in-out infinite;
+}
+
+.not-found-float-delay-1 {
+  animation-delay: -1.2s;
+}
+
+.not-found-float-delay-2 {
+  animation-delay: -2.4s;
+}
+
+.not-found-float-delay-3 {
+  animation-delay: -3.6s;
+}
+
 @keyframes hero-content-reveal {
   from {
     opacity: 0;
@@ -82,6 +108,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .not-found-float {
+    animation: none;
+  }
+
   .hero-content-reveal,
   .hero-sticker-reveal {
     animation: none;
