@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Logo from "./Logo";
+import Image from "next/image";
 
 const NAV_LINKS = [
-  { href: "/about", label: "Who We Are" },
-  { href: "/#projects", label: "Our Projects" },
+  { href: "/about", label: "About" },
+  { href: "/#projects", label: "Our projects" },
   { href: "/#contact", label: "Contact Us" },
 ];
 
@@ -12,13 +12,19 @@ export default function Header() {
     <header>
       <Link
         href="/#contact"
-        className="block bg-ut-orange py-1.5 text-center text-sm font-semibold text-white hover:underline"
+        className="block bg-ut-orange py-2 text-center text-xs font-semibold text-black hover:underline"
       >
-        Now Recruiting Fellows!
+        NOW RECRUITING FELLOWS! Apply by May 09th - July 21st
       </Link>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-10">
+      <div className="mx-auto flex min-h-[82px] w-full items-center justify-between px-5 sm:px-10 md:px-[8vw]">
         <Link href="/" aria-label="Longhorn Developers home">
-          <Logo className="text-base sm:text-lg" />
+          <Image
+            src="/lhdlogo.png"
+            alt="Longhorn Developers"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain"
+          />
         </Link>
         <nav>
           <ul className="flex gap-4 text-sm text-charcoal sm:gap-6">
