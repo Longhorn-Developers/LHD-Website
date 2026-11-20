@@ -102,7 +102,7 @@ export default function Home() {
           alt="Longhorn Developers students"
           width={900}
           height={600}
-          className="aspect-[16/9] w-full object-cover"
+          className="aspect-[16/9] w-full object-cover rounded-lg"
           priority
         />
       </section>
