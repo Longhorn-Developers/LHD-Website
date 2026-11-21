@@ -35,7 +35,7 @@ export default function Home() {
             alt=""
             width={180}
             height={180}
-            className="hero-sticker-reveal hero-delay-2 absolute bottom-[5%] left-[12%] w-[120px] sm:bottom-[7%] sm:left-[14%] sm:w-[135px] md:w-[200px] xl:bottom-[8%] xl:w-[175px]"
+            className="hero-sticker-reveal hero-delay-2 absolute bottom-[5%] left-[12%] w-[120px] sm:bottom-[7%] sm:left-[14%] sm:w-[135px] md:w-[145px] xl:bottom-[8%] xl:w-[175px]"
           />
           <Image
             src="/ut_computer_icon.png"
