@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import Reveal from "./components/Reveal";
+
 
 export default function Home() {
   return (
@@ -84,7 +86,7 @@ export default function Home() {
         id="about"
         className="mx-auto grid w-full scroll-mt-4 items-center gap-10 px-4 py-16 sm:px-10 md:grid-cols-[0.95fr_1.05fr] md:px-[8vw] md:py-20"
       >
-        <div>
+        <Reveal>
           <h2 className="text-[28px] font-bold tracking-tight">
             For students, by students
           </h2>
@@ -96,25 +98,27 @@ export default function Home() {
           <Link href="/about" className="mt-6 inline-block bg-charcoal px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-burnt-orange">
             About us ↗
           </Link>
-        </div>
-        <Image
-          src="/for_student_by_student.png"
-          alt="Longhorn Developers students"
-          width={900}
-          height={600}
-          className="aspect-[16/9] w-full object-cover rounded-lg"
-          priority
-        />
+        </Reveal>
+        <Reveal delay={0.15}>
+          <Image
+            src="/for_student_by_student.png"
+            alt="Longhorn Developers students"
+            width={900}
+            height={600}
+            className="aspect-[16/9] w-full rounded-lg object-cover"
+            priority
+          />
+        </Reveal>
       </section>
 
       {/* Selected Works */}
       <section id="projects" className="w-full scroll-mt-4 px-4 py-10 sm:px-10 md:px-[8vw] md:py-14">
-        <div className="flex items-center justify-between">
+        <Reveal className="flex items-center justify-between">
           <h2 className="text-[26px] font-bold tracking-tight">Selected Works</h2>
           <a href="#" className="text-xs text-charcoal">See all projects ↗</a>
-        </div>
+        </Reveal>
         <ul className="mt-7 grid grid-cols-1 gap-4 xl:grid-cols-12">
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          <Reveal as="li" className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight tracking-tight">UT Registration Plus</h3>
               <p className="mt-1 text-base leading-tight text-charcoal/80">Stay on top of registration</p>
@@ -149,8 +153,8 @@ export default function Home() {
                 className="absolute bottom-[-15%] left-[5%] z-10 w-[38%] rounded-t-[7px] object-contain shadow-[0_8px_18px_rgba(51,63,72,0.22)] sm:bottom-[-20%] sm:w-[34%] xl:bottom-[-25%] xl:w-[32%]"
               />
             </div>
-          </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          </Reveal>
+          <Reveal as="li" delay={0.08} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Mobilize UT</h3>
               <p className="mt-1 text-base text-charcoal/80">Accessibility, made easy</p>
@@ -192,8 +196,8 @@ export default function Home() {
                 New Release
               </span>
             </div>
-          </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          </Reveal>
+          <Reveal as="li" delay={0.16} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Pet Bevo</h3>
               <p className="mt-1 text-base text-charcoal/80">Lock in with Bevo</p>
@@ -219,8 +223,8 @@ export default function Home() {
                 In Beta
               </span>
             </div>
-          </li>
-          <li className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          </Reveal>
+          <Reveal as="li" delay={0.24} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Longhorn Loop</h3>
               <p className="mt-1 text-base text-charcoal/80">Stay in the loop</p>
@@ -252,7 +256,7 @@ export default function Home() {
                 className="absolute right-[2%] bottom-[-8%] w-[60%] object-contain xl:right-[9%]"
               />
             </div>
-          </li>
+          </Reveal>
         </ul>
       </section>
 
@@ -266,15 +270,17 @@ export default function Home() {
           backgroundSize: "70px 70px, 70px 70px, 100% 100%",
         }}
       >
-        <h2 className="text-lg font-bold sm:text-xl">Interested in working with us?</h2>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <Reveal as="h2" className="text-lg font-bold sm:text-xl">
+          Interested in working with us?
+        </Reveal>
+        <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-4">
           <a href="#" className="bg-charcoal px-5 py-2.5 text-xs text-white transition-colors hover:bg-burnt-orange">
             Become a Member
           </a>
           <a href="#" className="bg-charcoal px-5 py-2.5 text-xs text-white transition-colors hover:bg-burnt-orange">
             Partner With Us
           </a>
-        </div>
+        </Reveal>
       </section>
     </main>
   );
