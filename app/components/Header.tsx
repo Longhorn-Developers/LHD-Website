@@ -27,7 +27,7 @@ export default function Header() {
           />
         </Link>
         <nav>
-          <ul className="flex gap-5 text-base font-medium text-charcoal sm:gap-8 sm:text-lg">
+          <ul className="flex gap-5 text-charcoal sm:gap-8 text-[16px] font-bold">
             {NAV_LINKS.map(({ href, label }) => (
               <li key={href}>
                 <Link href={href} className="hover:text-burnt-orange">
