@@ -21,35 +21,35 @@ export default function Home() {
             alt=""
             width={300}
             height={90}
-            className="hero-sticker-reveal absolute left-[3%] top-[4%] w-[125px] -rotate-6 sm:left-[4%] sm:top-[6%] sm:w-[180px] md:w-[210px] lg:w-[250px] xl:left-[5%] xl:top-[8%] xl:w-[330px]"
+            className="hero-sticker-reveal absolute left-[3%] top-[12%] w-[190px] -rotate-6 sm:left-[4%] sm:top-[6%] sm:w-[180px] md:w-[210px] lg:w-[250px] xl:left-[5%] xl:top-[8%] xl:w-[330px]"
           />
           <Image
             src="/ut_tower_icon.png"
             alt=""
             width={180}
             height={180}
-            className="hero-sticker-reveal hero-delay-1 absolute bottom-[19%] left-[2%] w-[90px] -rotate-6 sm:bottom-[18%] sm:left-[3%] sm:w-[125px] md:w-[145px] lg:w-[150px] xl:bottom-[25%] xl:left-[4%] xl:w-[215px]"
+            className="hero-sticker-reveal hero-delay-1 absolute bottom-[19%] left-[2%] w-[110px] -rotate-6 sm:bottom-[18%] sm:left-[3%] sm:w-[125px] md:w-[145px] lg:w-[200px] xl:bottom-[25%] xl:left-[4%] xl:w-[215px]"
           />
           <Image
             src="/ut_cowboy_hat.png"
             alt=""
             width={180}
             height={180}
-            className="hero-sticker-reveal hero-delay-2 absolute bottom-[5%] left-[12%] w-[100px] sm:bottom-[7%] sm:left-[14%] sm:w-[135px] md:w-[150px] xl:bottom-[8%] xl:w-[175px]"
+            className="hero-sticker-reveal hero-delay-2 absolute bottom-[5%] left-[12%] w-[120px] sm:bottom-[7%] sm:left-[14%] sm:w-[135px] md:w-[200px] xl:bottom-[8%] xl:w-[175px]"
           />
           <Image
             src="/ut_computer_icon.png"
             alt=""
             width={180}
             height={180}
-            className="hero-sticker-reveal hero-delay-3 absolute bottom-[19%] right-[2%] w-[92px] -rotate-6 sm:bottom-[18%] sm:right-[3%] sm:w-[130px] md:w-[145px] lg:w-[150px] xl:bottom-[27%] xl:right-[5%] xl:w-[205px]"
+            className="hero-sticker-reveal hero-delay-3 absolute bottom-[19%] right-[2%] w-[110px] -rotate-6 sm:bottom-[18%] sm:right-[3%] sm:w-[130px] md:w-[145px] lg:w-[150px] xl:bottom-[27%] xl:right-[5%] xl:w-[205px]"
           />
           <Image
             src="/ut_bevo_icon.png"
             alt=""
             width={180}
             height={180}
-            className="hero-sticker-reveal hero-delay-4 absolute right-[3%] top-[5%] w-[90px] sm:right-[4%] sm:top-[7%] sm:w-[130px] md:w-[150px] xl:right-[7%] xl:w-[200px]"
+            className="hero-sticker-reveal hero-delay-4 absolute right-[3%] top-[12%] w-[140px] sm:right-[4%] sm:top-[7%] sm:w-[130px] md:w-[150px] xl:right-[7%] xl:w-[200px]"
           />
 
           <div className="relative z-10">
@@ -76,7 +76,7 @@ export default function Home() {
             alt=""
             width={180}
             height={70}
-            className="hero-sticker-reveal hero-delay-5 absolute bottom-[5%] right-[8%] w-[115px] sm:bottom-[6%] sm:right-[10%] sm:w-[150px] md:w-[175px] xl:bottom-[6%] xl:right-[12%] xl:w-[220px]"
+            className="hero-sticker-reveal hero-delay-5 absolute bottom-[8%] right-[8%] w-[140px] sm:bottom-[6%] sm:right-[10%] sm:w-[150px] md:w-[175px] xl:bottom-[6%] xl:right-[12%] xl:w-[220px]"
           />
         </div>
         <div
