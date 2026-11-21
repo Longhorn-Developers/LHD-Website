@@ -154,7 +154,7 @@ export default function Home() {
                 alt="UT Registration Plus Chrome extension"
                 width={1720}
                 height={2200}
-                className="absolute bottom-[-15%] left-[5%] z-10 w-[38%] rounded-t-[7px] object-contain shadow-[0_8px_18px_rgba(51,63,72,0.22)] sm:bottom-[-20%] sm:w-[34%] xl:bottom-[-25%] xl:w-[32%]"
+                className="absolute bottom-[-33%] sm:bottom-[-24%] md:bottom-[-24%] left-[5%] z-10 w-[38%] rounded-t-[7px] object-contain shadow-[0_8px_18px_rgba(51,63,72,0.22)] sm:w-[34%] xl:bottom-[-21%] xl:w-[32%]"
               />
             </div>
           </Reveal>
