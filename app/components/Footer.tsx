@@ -31,7 +31,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <p className="bg-ut-orange py-1.5 text-center text-[11px] text-black">
+      <p className="bg-ut-orange py-1.5 text-center text-[11px] text-black font-bold">
         Made with ❤️, by Longhorn Developers
       </p>
     </footer>

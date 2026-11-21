@@ -8,7 +8,7 @@ export default function Home() {
     <main className="overflow-hidden font-sans">
       {/* Hero */}
       <section
-        className="relative min-h-[90vh] w-full overflow-hidden bg-[#f0eeee] px-4 sm:px-10"
+        className="relative min-h-[90vh] w-full overflow-hidden bg-[#EDEBE3] px-4 sm:px-10"
         style={{
           backgroundImage:
             "linear-gradient(to right, rgba(51,63,72,0.10) 1px, transparent 1px), linear-gradient(to bottom, rgba(51,63,72,0.10) 1px, transparent 1px)",
@@ -79,6 +79,10 @@ export default function Home() {
             className="hero-sticker-reveal hero-delay-5 absolute bottom-[5%] right-[8%] w-[115px] sm:bottom-[6%] sm:right-[10%] sm:w-[150px] md:w-[175px] xl:bottom-[6%] xl:right-[12%] xl:w-[220px]"
           />
         </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-b from-transparent to-white"
+        />
       </section>
 
       {/* About */}
@@ -87,10 +91,10 @@ export default function Home() {
         className="mx-auto grid w-full scroll-mt-4 items-center gap-10 px-4 py-16 sm:px-10 md:grid-cols-[0.95fr_1.05fr] md:px-[8vw] md:py-20"
       >
         <Reveal>
-          <h2 className="text-[28px] font-bold tracking-tight">
+          <h2 className="text-[36px] font-medium tracking-tight">
             For students, by students
           </h2>
-          <p className="mt-4 max-w-[430px] text-sm leading-relaxed">
+          <p className="mt-4 max-w-[480px] text-base leading-relaxed">
             Longhorn Developers brings together student developers to build open-source projects and tools for students, faculty and staff.
             <br /><br />
             We work with UT departments and Enterprise Technology, and maintain our projects for the long term.
@@ -114,7 +118,7 @@ export default function Home() {
       {/* Selected Works */}
       <section id="projects" className="w-full scroll-mt-4 px-4 py-10 sm:px-10 md:px-[8vw] md:py-14">
         <Reveal className="flex items-center justify-between">
-          <h2 className="text-[26px] font-bold tracking-tight">Selected Works</h2>
+          <h2 className="text-[36px] font-medium tracking-tight">Selected Works</h2>
           <a href="#" className="text-xs text-charcoal">See all projects ↗</a>
         </Reveal>
         <ul className="mt-7 grid grid-cols-1 gap-4 xl:grid-cols-12">
@@ -270,14 +274,14 @@ export default function Home() {
           backgroundSize: "70px 70px, 70px 70px, 100% 100%",
         }}
       >
-        <Reveal as="h2" className="text-lg font-bold sm:text-xl">
+        <Reveal as="h2" className="text-2xl font-medium tracking-tight sm:text-[28px]">
           Interested in working with us?
         </Reveal>
         <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-4">
-          <a href="#" className="bg-charcoal px-5 py-2.5 text-xs text-white transition-colors hover:bg-burnt-orange">
+          <a href="#" className="bg-charcoal px-6 py-3 text-sm text-white transition-colors hover:bg-burnt-orange">
             Become a Member
           </a>
-          <a href="#" className="bg-charcoal px-5 py-2.5 text-xs text-white transition-colors hover:bg-burnt-orange">
+          <a href="#" className="bg-charcoal px-6 py-3 text-sm text-white transition-colors hover:bg-burnt-orange">
             Partner With Us
           </a>
         </Reveal>
