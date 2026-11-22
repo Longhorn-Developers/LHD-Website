@@ -42,6 +42,11 @@ function SlideItems({ slides, hidden = false }: { slides: Slide[]; hidden?: bool
               alt={hidden ? "" : slide.alt}
               fill
               sizes="(min-width: 640px) 32vw, 70vw"
+              // The strip scrolls on its own, so lazy-loading would make images
+              // pop in as they slide into view. Preload the first few and fetch
+              // the rest eagerly.
+              priority={!hidden && i < 3}
+              loading={!hidden && i < 3 ? undefined : "eager"}
               className="object-cover"
             />
           )}
