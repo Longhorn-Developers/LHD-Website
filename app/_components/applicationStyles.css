@@ -54,12 +54,12 @@
     background-color: #2563eb;
     z-index: -1; /* Places it behind the text */
     transform: translateX(-101%); /* Starts hidden off to the left */
-    transition: transform 0.6s cubic-bezier(.22, .53, .88, .53);
+    transition: transform 0.5s cubic-bezier(.22, .53, .88, .47);
 }
 
 /* Slide in on hover */
 .role-container:hover {
-    transform: scale(1.02);
+    transform: scale(1.04);
 }
 
 .role-container:has(input[type="checkbox"]:checked)::before {

@@ -3,7 +3,7 @@ import "../_components/applicationStyles.css";
 import { menus } from "../_data/applicationQuestions";
 import { useState, useRef, Dispatch, SetStateAction } from "react";
 
-interface RoleProps {
+export interface RoleProps {
   roles: string[];
   setRoles: Dispatch<SetStateAction<string[]>>;
 }
@@ -34,10 +34,10 @@ export default function RoleSelection({roles, setRoles} : RoleProps) {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <label htmlFor="teamSelect">Select the applications you'd like to complete:</label>
+            <label htmlFor="teamSelect">Select the roles you'd like to apply for:</label>
             <div
                 id="teamSelect"
-                className="w-fit outline-0 flex flex-col gap-3"
+                className="w-fit outline-0 flex flex-row gap-3"
                 ref={containerRef}
             >
                 {Object.entries(menus).slice(1).map(([id, label]) => (
@@ -45,7 +45,7 @@ export default function RoleSelection({roles, setRoles} : RoleProps) {
                         <input type="checkbox" key={id} value={id} 
                         onChange={handleReadCheckboxes} className="role-input"
                         />
-                        <p>{label}</p>
+                        <p>{label.split(" ")[0]}</p>
                     </label>
                 ))}
             </div>
