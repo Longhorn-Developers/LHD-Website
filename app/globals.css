@@ -117,3 +117,24 @@ body {
     animation: none;
   }
 }
+
+@keyframes slideshow-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.slideshow-track {
+  animation-name: slideshow-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-track {
+    animation: none;
+  }
+}

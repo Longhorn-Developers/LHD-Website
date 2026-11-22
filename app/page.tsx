@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroHeadline, PopSticker } from "./components/HeroReveal";
 import Reveal from "./components/Reveal";
+import { HOME_IMAGES } from "./images";
 
 
 export default function Home() {
@@ -18,35 +19,35 @@ export default function Home() {
       >
         <div className="relative flex min-h-[90vh] items-center justify-center px-6 py-14 text-center sm:py-16">
           <PopSticker
-            src="/home_page_images/lhd-original-sticker.png"
+            src={HOME_IMAGES.heroSticker}
             width={300}
             height={90}
             order={0}
             className="absolute left-[3%] top-[12%] w-[190px] -rotate-6 sm:left-[4%] sm:top-[6%] sm:w-[180px] md:w-[210px] lg:w-[250px] xl:left-[5%] xl:top-[8%] xl:w-[330px]"
           />
           <PopSticker
-            src="/home_page_images/ut_tower_icon.png"
+            src={HOME_IMAGES.utTower}
             width={180}
             height={180}
             order={1}
             className="absolute bottom-[19%] left-[2%] w-[110px] -rotate-6 sm:bottom-[18%] sm:left-[3%] sm:w-[125px] md:w-[145px] lg:w-[200px] lg:bottom-[37%] xl:bottom-[35%] xl:left-[4%] xl:w-[215px]"
           />
           <PopSticker
-            src="/home_page_images/ut_cowboy_hat.png"
+            src={HOME_IMAGES.cowboyHat}
             width={180}
             height={180}
             order={2}
             className="absolute bottom-[5%] left-[12%] w-[120px] sm:bottom-[7%] sm:left-[14%] sm:w-[135px] md:w-[145px] xl:bottom-[8%] xl:w-[175px]"
           />
           <PopSticker
-            src="/home_page_images/ut_computer_icon.png"
+            src={HOME_IMAGES.computerIcon}
             width={180}
             height={180}
             order={3}
             className="absolute bottom-[19%] right-[2%] w-[110px] -rotate-6 sm:bottom-[18%] sm:right-[3%] sm:w-[130px] md:w-[145px] lg:w-[150px] lg:bottom-[47%] xl:bottom-[40%] xl:right-[5%] xl:w-[205px]"
           />
           <PopSticker
-            src="/home_page_images/ut_bevo_icon.png"
+            src={HOME_IMAGES.bevoIcon}
             width={180}
             height={180}
             order={4}
@@ -73,7 +74,7 @@ export default function Home() {
           </HeroHeadline>
 
           <PopSticker
-            src="/home_page_images/ut_hello_world.png"
+            src={HOME_IMAGES.helloWorld}
             width={180}
             height={70}
             order={5}
@@ -106,7 +107,7 @@ export default function Home() {
         </Reveal>
         <Reveal delay={0.15}>
           <Image
-            src="/home_page_images/for_student_by_student.png"
+            src={HOME_IMAGES.forStudents}
             alt="Longhorn Developers students"
             width={900}
             height={600}
@@ -144,14 +145,14 @@ export default function Home() {
               }}
             >
               <Image
-                src="/home_page_images/ut_registration_browser.png"
+                src={HOME_IMAGES.registrationBrowser}
                 alt="UT Registration Plus browser schedule"
                 width={760}
                 height={470}
                 className="absolute bottom-0 left-1/2 w-[88%] -translate-x-1/2 rounded-t-[8px] object-contain xl:w-[85%]"
               />
               <Image
-                src="/home_page_images/ut_registration_chrome_extension.jpg"
+                src={HOME_IMAGES.registrationExtension}
                 alt="UT Registration Plus Chrome extension"
                 width={1720}
                 height={2200}
@@ -176,7 +177,7 @@ export default function Home() {
               <div className="absolute inset-0 grid grid-cols-2 items-center gap-4 pl-[5%]">
                 <div className="flex translate-y-[0%] sm:translate-y-[-20%] flex-col items-end text-center text-white">
                   <Image
-                    src="/home_page_images/mobilize_ut_icon.png"
+                    src={HOME_IMAGES.mobilizeIcon}
                     alt=""
                     width={142}
                     height={142}
@@ -188,7 +189,7 @@ export default function Home() {
                 </div>
                 <div className="flex h-full justify-end pt-[8%]">
                   <Image
-                    src="/home_page_images/mobilize_ut_phone.png"
+                    src={HOME_IMAGES.mobilizePhone}
                     alt="Mobilize UT mobile app preview"
                     width={141}
                     height={327}
@@ -217,7 +218,7 @@ export default function Home() {
               }}
             >
               <Image
-                src="/home_page_images/bevo_illustration.png"
+                src={HOME_IMAGES.bevoIllustration}
                 alt="Bevo illustration"
                 width={354}
                 height={122}
@@ -244,7 +245,7 @@ export default function Home() {
               }}
             >
               <Image
-                src="/home_page_images/longhorn_loop_icon.png"
+                src={HOME_IMAGES.longhornLoopIcon}
                 alt=""
                 width={406}
                 height={512}
@@ -254,7 +255,7 @@ export default function Home() {
                 Longhorn Loop
               </p>
               <Image
-                src="/home_page_images/longhorn_loop_phone.png"
+                src={HOME_IMAGES.longhornLoopPhone}
                 alt="Longhorn Loop mobile app"
                 width={441}
                 height={332}

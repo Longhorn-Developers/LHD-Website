@@ -16,18 +16,18 @@ export default function Header() {
       >
         NOW RECRUITING FELLOWS! Apply by May 09th - July 21st
       </Link>
-      <div className="mx-auto flex min-h-[100px] w-full bg-[#EDEBE3] items-center justify-between px-5 sm:px-10 md:px-[8vw]">
+      <div className="mx-auto flex min-h-[72px] w-full bg-[#FFFFFF] items-center justify-between px-5 sm:px-10 md:px-[8vw]">
         <Link href="/" aria-label="Longhorn Developers home">
           <Image
             src="/lhdlogo.png"
             alt="Longhorn Developers"
-            width={64}
-            height={64}
-            className="h-16 w-16 object-contain rounded-sm"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain rounded-sm"
           />
         </Link>
         <nav>
-          <ul className="flex gap-5 text-charcoal sm:gap-8 text-[16px] font-bold">
+          <ul className="flex gap-5 text-charcoal sm:gap-8 text-[15px] font-bold">
             {NAV_LINKS.map(({ href, label }) => (
               <li key={href}>
                 <Link href={href} className="hover:text-burnt-orange">

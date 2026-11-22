@@ -6,16 +6,13 @@ import {
   LinkedInIcon,
 } from "./SocialIcons";
 
-import { RxDiscordLogo, RxInstagramLogo, RxGithubLogo } from "react-icons/rx";
-import { CiLinkedin } from "react-icons/ci";
-
 
 // TODO: replace with real links once handles are confirmed.
 const SOCIALS = [
-  { href: "https://discord.com/invite/S3dFjY8QBt?fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAacJXMmvnWxN-EyZtbBIsOsAvvHeN_E6DUibbWyCSZ8u1KkXyxocceKNWzjr9w_aem_Og9t3DRg0ZcivcxtnoKUAQ", label: "Discord", Icon: RxDiscordLogo },
-  { href: "https://www.instagram.com/longhorndevelopers/", label: "Instagram", Icon: RxInstagramLogo },
-  { href: "https://www.linkedin.com/company/longhorn-developers/", label: "LinkedIn", Icon: CiLinkedin },
-  { href: "https://github.com/Longhorn-Developers", label: "GitHub", Icon: RxGithubLogo },
+  { href: "https://discord.com/invite/S3dFjY8QBt?fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAacJXMmvnWxN-EyZtbBIsOsAvvHeN_E6DUibbWyCSZ8u1KkXyxocceKNWzjr9w_aem_Og9t3DRg0ZcivcxtnoKUAQ", label: "Discord", Icon: DiscordIcon },
+  { href: "https://www.instagram.com/longhorndevelopers/", label: "Instagram", Icon: InstagramIcon },
+  { href: "https://www.linkedin.com/company/longhorn-developers/", label: "LinkedIn", Icon: LinkedInIcon },
+  { href: "https://github.com/Longhorn-Developers", label: "GitHub", Icon: GitHubIcon },
 ];
 
 export default function Footer() {
