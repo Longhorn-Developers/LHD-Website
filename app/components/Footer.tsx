@@ -6,12 +6,16 @@ import {
   LinkedInIcon,
 } from "./SocialIcons";
 
+import { RxDiscordLogo, RxInstagramLogo, RxGithubLogo } from "react-icons/rx";
+import { CiLinkedin } from "react-icons/ci";
+
+
 // TODO: replace with real links once handles are confirmed.
 const SOCIALS = [
-  { href: "#", label: "Discord", Icon: DiscordIcon },
-  { href: "#", label: "Instagram", Icon: InstagramIcon },
-  { href: "#", label: "LinkedIn", Icon: LinkedInIcon },
-  { href: "https://github.com/Longhorn-Developers", label: "GitHub", Icon: GitHubIcon },
+  { href: "https://discord.com/invite/S3dFjY8QBt?fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAacJXMmvnWxN-EyZtbBIsOsAvvHeN_E6DUibbWyCSZ8u1KkXyxocceKNWzjr9w_aem_Og9t3DRg0ZcivcxtnoKUAQ", label: "Discord", Icon: RxDiscordLogo },
+  { href: "https://www.instagram.com/longhorndevelopers/", label: "Instagram", Icon: RxInstagramLogo },
+  { href: "https://www.linkedin.com/company/longhorn-developers/", label: "LinkedIn", Icon: CiLinkedin },
+  { href: "https://github.com/Longhorn-Developers", label: "GitHub", Icon: RxGithubLogo },
 ];
 
 export default function Footer() {
@@ -23,8 +27,8 @@ export default function Footer() {
           <ul className="flex gap-3">
               {SOCIALS.map(({ href, label, Icon }) => (
                 <li key={label}>
-                  <a href={href} aria-label={label} className="block rounded-full hover:opacity-80">
-                    <Icon className="size-4" />
+                  <a href={href} aria-label={label} className="block rounded-full hover:opacity-80" target="_blank">
+                    <Icon className="size-6 font-light" />
                   </a>
                 </li>
               ))}

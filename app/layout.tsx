@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "A student-led open source community at UT Austin, building tools that bring a better campus experience.",
     icons: {
-      icon: "/lhdlogo.png",
+      icon: "/lhd_logo.png",
     },
   };
 }
