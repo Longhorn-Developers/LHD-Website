@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+
+.portal-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 50px;
+}
+
+.drag-element {
+    padding: 12px;
+    margin: 8px 0;
+    background: #f4f4f5;
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    cursor: grab;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.role-input {
+    appearance: none;
+    -webkit-appearance: none; /* Safari support */
+    margin: 0;
+    position: relative;
+    padding: 20px;
+}
+
+/* The sliding solid color layer */
+.role-input::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #2563eb;
+    z-index: -1; /* Places it behind the text */
+    transform: translateX(-100%); /* Starts hidden off to the left */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Slide in on hover */
+.role-input:hover {
+    color: #ffffff;
+}
+
+.role-input:hover::before {
+    transform: translateX(0);
+}
