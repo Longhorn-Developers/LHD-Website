@@ -22,7 +22,7 @@ export default function Logo({ variant = "light", className = "" }: LogoProps) {
         className="relative h-[1.6em] w-[1.3em] overflow-hidden rounded-[3px]"
       >
         <Image
-          src="/lhdlogo.png"
+          src="/lhd_logo.png"
           alt=""
           width={512}
           height={512}
