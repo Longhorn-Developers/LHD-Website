@@ -124,7 +124,7 @@ export default function Home() {
           <a href="#" className="text-xs text-charcoal hover:text-burnt-orange  transition-all duration-300">See all projects ↗</a>
         </Reveal>
         <ul className="mt-7 grid grid-cols-1 gap-4 xl:grid-cols-12">
-          <Reveal as="li" className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          <Reveal as="li" className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight tracking-tight">UT Registration Plus</h3>
               <p className="mt-1 text-base leading-tight text-charcoal/80">Stay on top of registration</p>
@@ -145,6 +145,7 @@ export default function Home() {
               }}
             >
               <Image
+                loading="eager"
                 src={HOME_IMAGES.registrationBrowser}
                 alt="UT Registration Plus browser schedule"
                 width={760}
@@ -152,6 +153,7 @@ export default function Home() {
                 className="absolute bottom-0 left-1/2 w-[88%] -translate-x-1/2 rounded-t-[8px] object-contain xl:w-[85%]"
               />
               <Image
+                loading="eager"
                 src={HOME_IMAGES.registrationExtension}
                 alt="UT Registration Plus Chrome extension"
                 width={1720}
@@ -160,7 +162,7 @@ export default function Home() {
               />
             </div>
           </Reveal>
-          <Reveal as="li" delay={0.08} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          <Reveal as="li" delay={0.08} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Mobilize UT</h3>
               <p className="mt-1 text-base text-charcoal/80">Accessibility, made easy</p>
@@ -177,6 +179,7 @@ export default function Home() {
               <div className="absolute inset-0 grid grid-cols-2 items-center gap-4 pl-[5%]">
                 <div className="flex translate-y-[0%] sm:translate-y-[-20%] flex-col items-end text-center text-white">
                   <Image
+                    loading="eager"
                     src={HOME_IMAGES.mobilizeIcon}
                     alt=""
                     width={142}
@@ -189,6 +192,7 @@ export default function Home() {
                 </div>
                 <div className="flex h-full justify-end pt-[8%]">
                   <Image
+                    loading="eager"
                     src={HOME_IMAGES.mobilizePhone}
                     alt="Mobilize UT mobile app preview"
                     width={141}
@@ -203,7 +207,7 @@ export default function Home() {
               </span>
             </div>
           </Reveal>
-          <Reveal as="li" delay={0.16} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          <Reveal as="li" delay={0.16} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Pet Bevo</h3>
               <p className="mt-1 text-base text-charcoal/80">Lock in with Bevo</p>
@@ -218,6 +222,7 @@ export default function Home() {
               }}
             >
               <Image
+                loading="eager"
                 src={HOME_IMAGES.bevoIllustration}
                 alt="Bevo illustration"
                 width={354}
@@ -230,7 +235,7 @@ export default function Home() {
               </span>
             </div>
           </Reveal>
-          <Reveal as="li" delay={0.24} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 transition-all duration-300">
+          <Reveal as="li" delay={0.24} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-7 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Longhorn Loop</h3>
               <p className="mt-1 text-base text-charcoal/80">Stay in the loop</p>
@@ -245,6 +250,7 @@ export default function Home() {
               }}
             >
               <Image
+                loading="eager"
                 src={HOME_IMAGES.longhornLoopIcon}
                 alt=""
                 width={406}
@@ -255,6 +261,7 @@ export default function Home() {
                 Longhorn Loop
               </p>
               <Image
+                loading="eager"
                 src={HOME_IMAGES.longhornLoopPhone}
                 alt="Longhorn Loop mobile app"
                 width={441}
