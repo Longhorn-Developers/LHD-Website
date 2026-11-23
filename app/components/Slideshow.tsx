@@ -34,7 +34,7 @@ function SlideItems({ slides, hidden = false }: { slides: Slide[]; hidden?: bool
         <li
           key={i}
           aria-hidden={hidden || !slide.src}
-          className="relative mr-3 h-[180px] w-[70vw] shrink-0 overflow-hidden bg-placeholder sm:h-[260px] sm:w-[32vw]"
+          className="relative mr-3 h-[180px] w-[70vw] shrink-0 overflow-hidden bg-none sm:h-[260px] sm:w-[32vw]"
         >
           {slide.src && (
             <Image
@@ -47,7 +47,7 @@ function SlideItems({ slides, hidden = false }: { slides: Slide[]; hidden?: bool
               // the rest eagerly.
               priority={!hidden && i < 3}
               loading={!hidden && i < 3 ? undefined : "eager"}
-              className="object-cover"
+              className="object-cover rounded-md"
             />
           )}
         </li>

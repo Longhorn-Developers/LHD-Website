@@ -144,7 +144,7 @@ export default function AboutPage() {
           {VALUES.map((v, i) => (
             <Reveal as="li" key={v.title} delay={i * 0.1}>
               <Image
-                className="aspect-[4/5] w-full object-cover sm:aspect-[5/6]"
+                className="aspect-[4/5] w-full object-cover sm:aspect-[5/6] rounded-md"
                 src={v.src}
                 alt={v.body}
                 width={3840}
@@ -163,7 +163,7 @@ export default function AboutPage() {
       <section className="grid items-center gap-10 px-4 py-20 sm:px-10 md:grid-cols-[1.8fr_1fr] md:gap-[4vw] md:px-[4vw] md:py-28">
         <Reveal>
           <Image
-                className="aspect-[4/3] w-full object-cover sm:aspect-[16/10]"
+                className="aspect-[4/3] w-full object-cover sm:aspect-[16/10] rounded-md"
                 src={ABOUT_IMAGES.howWeWork}
                 alt={"How we work image"}
                 width={3840}
