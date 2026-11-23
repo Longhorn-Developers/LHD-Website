@@ -19,7 +19,7 @@ export default function Header() {
       <div className="mx-auto flex min-h-[72px] w-full bg-[#FFFFFF] items-center justify-between px-5 sm:px-10 md:px-[8vw]">
         <Link href="/" aria-label="Longhorn Developers home">
           <Image
-            src="/lhdlogo.png"
+            src="/lhd_logo.png"
             alt="Longhorn Developers"
             width={48}
             height={48}
