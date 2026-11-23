@@ -164,14 +164,14 @@ export default function Home() {
               />
             </div>
           </Reveal>
-          <Reveal as="li" delay={0.08} className="relative rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
+          <Reveal as="li" delay={0.08} className="relative flex flex-col rounded-xl bg-[#f6f5f2] p-3 xl:col-span-5 cursor-pointer hover:-translate-y-3 [transition-property:translate] duration-300 [backface-visibility:hidden]">
             <div className="mb-3 pr-12">
               <h3 className="text-xl font-semibold leading-tight">Mobilize UT</h3>
               <p className="mt-1 text-base text-charcoal/80">Accessibility, made easy</p>
             </div>
             <a href="#" aria-label="View Mobilize UT" className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-[4px] bg-charcoal text-base text-white">↗</a>
             <div
-              className="relative h-[380px] overflow-hidden rounded-lg bg-[#f8971f] xl:h-[420px]"
+              className="relative min-h-[380px] flex-1 overflow-hidden rounded-lg bg-[#f8971f] xl:min-h-[420px]"
               style={{
                 backgroundImage:
                   "linear-gradient(to right, #d98010 1px, transparent 1px), linear-gradient(to bottom, #d98010 1px, transparent 1px)",
@@ -192,14 +192,14 @@ export default function Home() {
                     Mobilize UT
                   </span>
                 </div>
-                <div className="flex h-full justify-end pt-[8%]">
+                <div className="flex h-full items-end justify-end">
                   <Image
                     loading="eager"
                     src={HOME_IMAGES.mobilizePhone}
                     alt="Mobilize UT mobile app preview"
                     width={141}
                     height={327}
-                    className="w-[90%] max-w-[210px] object-contain"
+                    className="h-full w-auto max-w-full object-contain object-bottom top-5 relative"
                   />
                 </div>
               </div>
