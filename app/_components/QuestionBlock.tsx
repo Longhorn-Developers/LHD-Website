@@ -17,11 +17,31 @@ export default function QuestionBlock({tab} : {tab : string}) {
 
 export function ApplicationQuestion({question} : {question: Question}) {
 
+    const [response, setResponse] = useState('');
+
+    const updateResponse = (text: string) => {
+        if (!question.wordLimit || getLength(text) <= question.wordLimit) {
+            setResponse(text);
+        }
+    }
+
+    const getLength = (text: string) => {
+        const trimmed = text.trim();
+        if (!trimmed) return 0;
+        return trimmed.split(/\s+/).length;
+    }
+
     return (
         <div className="text-left">
             <p>{question.description}</p>
-            <textarea></textarea>
-            <p>Word Limit: {question.wordLimit}</p>
+            <textarea
+                value={response}
+                onChange={(e) => updateResponse(e.target.value)}
+                placeholder="Type your response here..."
+            />
+            {question.wordLimit && 
+                <p>Words Remaining: {question.wordLimit - getLength(response)}</p>
+            }
         </div>
     );
 
