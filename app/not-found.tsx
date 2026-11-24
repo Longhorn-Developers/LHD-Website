@@ -13,35 +13,35 @@ export default function NotFound() {
         }}
       >
         <Image
-          src="/ut_tower_icon.png"
+          src="/home_page_images/ut_tower_icon.png"
           alt=""
           width={180}
           height={180}
           className="not-found-float absolute right-[5%] top-[8%] w-[90px] -rotate-6 opacity-80 sm:right-[8%] sm:top-[12%] sm:w-[140px] md:w-[180px]"
         />
         <Image
-          src="/ut_bevo_icon.png"
+          src="/home_page_images/ut_bevo_icon.png"
           alt=""
           width={180}
           height={180}
           className="not-found-float not-found-float-delay-1 absolute left-[5%] top-[10%] w-[58px] rotate-6 opacity-80 sm:left-[8%] sm:top-[12%] sm:w-[100px] md:w-[140px]"
         />
         <Image
-          src="/ut_cowboy_hat.png"
+          src="/home_page_images/ut_cowboy_hat.png"
           alt=""
           width={180}
           height={180}
           className="not-found-float not-found-float-delay-2 absolute bottom-[10%] left-[8%] w-[68px] -rotate-6 opacity-80 sm:bottom-[12%] sm:left-[14%] sm:w-[115px] md:w-[150px]"
         />
         <Image
-          src="/ut_computer_icon.png"
+          src="/home_page_images/ut_computer_icon.png"
           alt=""
           width={180}
           height={180}
           className="not-found-float not-found-float-delay-3 absolute bottom-[9%] right-[7%] w-[64px] rotate-6 opacity-80 sm:bottom-[12%] sm:right-[13%] sm:w-[110px] md:w-[145px]"
         />
         <Image
-          src="/ut_hello_world.png"
+          src="/home_page_images/ut_hello_world.png"
           alt=""
           width={180}
           height={70}
