@@ -1,12 +1,12 @@
 "use client";
-import "../_components/applicationStyles.css";
+import "../_styles/applicationStyles.css";
 import { Question, questions } from "../_data/applicationQuestions";
 import { useState, useRef, Dispatch, SetStateAction } from "react";
 
 
 export default function QuestionBlock({tab} : {tab : string}) {
     return (
-        <div>
+        <div className="w-[40%]">
         {questions.filter((question: Question) => question.role == tab)
             .map((question: Question) => (
                 <ApplicationQuestion question={question} key={question.ID} />
@@ -38,6 +38,7 @@ export function ApplicationQuestion({question} : {question: Question}) {
                 value={response}
                 onChange={(e) => updateResponse(e.target.value)}
                 placeholder="Type your response here..."
+                className="w-full h-30 resize-y"
             />
             {question.wordLimit && 
                 <p>Words Remaining: {question.wordLimit - getLength(response)}</p>

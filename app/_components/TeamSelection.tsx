@@ -1,5 +1,5 @@
 "use client";
-import "./applicationStyles.css";
+import "../_styles/applicationStyles.css";
 import { teamOptions } from "../_data/applicationQuestions";
 import { useRef, useEffect , Dispatch, SetStateAction } from "react";
 

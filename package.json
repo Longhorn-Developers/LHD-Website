@@ -18,12 +18,14 @@
     "next": "^16.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "unocss": "^66.13.0"
   },
   "devDependencies": {
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@unocss/postcss": "^66.13.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.4.1",
     "typescript": "5.9.3",

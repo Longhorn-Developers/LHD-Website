@@ -1,5 +1,5 @@
 "use client";
-import "../_components/applicationStyles.css";
+import "../_styles/applicationStyles.css";
 import { menus } from "../_data/applicationQuestions";
 import { useState, useRef, Dispatch, SetStateAction } from "react";
 
