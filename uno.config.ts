@@ -35,4 +35,5 @@ export default defineConfig({
         }),
     ],
     transformers: [transformerVariantGroup(), transformerDirectives()],
+    safelist: ['before:bg-ut-yellow', 'before:bg-ut-blue', 'before:bg-ut-green'],
 });

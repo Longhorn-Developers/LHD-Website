@@ -1,29 +1,5 @@
 @unocss all;
 
-/* @theme {
-    --color-burnt-orange: #bf5700;
-    --color-charcoal: #333f48;
-    --color-white: #ffffff;
-    --color-black: #000000;
-    --color-tangerine: #f8971f;
-    --color-sunshine: #ffd600;
-    --color-warning: #c59134;
-    --color-cactus: #a6cd57;
-    --color-turtle-pond: #579d42;
-    --color-turquoise: #00a9b7;
-    --color-bluebonnet: #005f86;
-    --color-shade: #9cadb7;
-    --color-limestone: #d6d2c4;
-    --color-speedway-brick: #d10000;
-    --color-bg: #0f1115;
-    --color-panel: #202329;
-    --color-line: #2a2f3a;
-    --color-text: #e6e8ee;
-    --color-muted: #8b93a7;
-    --color-accent: #bf5700;
-    --color-ok: #3fb950;
-} */
-
 body {
     background-color: theme('colors.theme.bg');
     color: theme('colors.theme.text');
@@ -79,7 +55,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #2563eb;
+    background-color: var(--sliding-bg-color);
     z-index: -1; /* Places it behind the text */
     transform: translateX(-101%); /* Starts hidden off to the left */
     transition: transform 0.5s cubic-bezier(.22, .53, .88, .47);

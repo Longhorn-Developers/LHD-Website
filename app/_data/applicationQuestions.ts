@@ -19,9 +19,9 @@ export type Role = "product" | "design" | "tech" | "general";
 
 export const menus: Record<string, string> = {
     "general": "General Questions",
-    "tech": "Developer Application",
-    "design": "Designer Application",
     "product": "Product Application",
+    "design": "Designer Application",
+    "tech": "Developer Application",
 }
 
 export const teamOptions: Record<string, string> = {
@@ -63,3 +63,9 @@ export const questions: Question[]  = [
     }
 ];
 
+export const menuColors: Record<string, string> = {
+    "general": "ut-burntorange",
+    "tech": "ut-yellow",
+    "design": "ut-blue",
+    "product": "ut-green",
+}
