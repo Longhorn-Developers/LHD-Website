@@ -1,6 +1,6 @@
 import { colors } from './app/_styles/ThemeColors'
 
-import presetUno from '@unocss/preset-uno';
+import presetWind4 from '@unocss/preset-wind4';
 import presetWebFonts from '@unocss/preset-web-fonts';
 import transformerDirectives from '@unocss/transformer-directives';
 import transformerVariantGroup from '@unocss/transformer-variant-group';
@@ -21,9 +21,9 @@ export default defineConfig({
         colors,
     },
     presets: [
-        presetUno({
+        presetWind4({
             preflights: { 
-                theme: true, 
+                theme: { mode: true }, 
             },
         }),
         presetWebFonts({
@@ -35,5 +35,4 @@ export default defineConfig({
         }),
     ],
     transformers: [transformerVariantGroup(), transformerDirectives()],
-    safelist: ['before:bg-ut-yellow', 'before:bg-ut-blue', 'before:bg-ut-green'],
 });

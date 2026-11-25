@@ -44,31 +44,34 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
     };
 
     return (
-        <div className="flex flex-row gap-5">
-            <ul className="list-none p-0 w-80">
-            {teams.map((id, index) => (
-                <li
-                key={id}
-                draggable
-                onDragStart={() => (dragItemIndex.current = index)}
-                onDragEnter={() => (dragOverItemIndex.current = index)}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => e.preventDefault()} // Required to allow dropping
-                
-                className="drag-element"
-                >
-                <b>{index + 1}</b> {teamOptions[id]} <Bars/>
-                </li>
-            ))}
-            </ul>
-            <ul className="list-none p-0 w-60 flex flex-col gap-2 my-3">
-            {Object.entries(teamOptions).map(([id, label]) => (
-                <li key={id} className={teams.length > 4 ? "text-gray-400" : ""} onClick={() => addTeam(id)}>
-                <p><b className="px-1">+</b> {label}</p>
-                </li>
-            ))}
-            </ul>
-        </div>
+        <>
+            <p>Select the teams you wish to apply for and your order of preference:</p>
+            <div className="flex flex-row gap-5">
+                <ul className="list-none p-0 w-80 text-theme-black">
+                {teams.map((id, index) => (
+                    <li
+                    key={id}
+                    draggable
+                    onDragStart={() => (dragItemIndex.current = index)}
+                    onDragEnter={() => (dragOverItemIndex.current = index)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={(e) => e.preventDefault()} // Required to allow dropping
+                    
+                    className="drag-element"
+                    >
+                    <b>{index + 1}</b> {teamOptions[id]} <Bars/>
+                    </li>
+                ))}
+                </ul>
+                <ul className="list-none p-0 w-60 flex flex-col gap-2 my-3">
+                {Object.entries(teamOptions).map(([id, label]) => (
+                    <li key={id} className={teams.length > 4 ? "text-gray-400" : ""} onClick={() => addTeam(id)}>
+                    <p><b className="px-1">+</b> {label}</p>
+                    </li>
+                ))}
+                </ul>
+            </div>
+        </>
     )
 }
 

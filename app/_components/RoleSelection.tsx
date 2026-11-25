@@ -40,11 +40,11 @@ export default function RoleSelection({roles, setRoles} : RoleProps) {
 
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center gap-2">
             <label htmlFor="teamSelect">Select the roles you'd like to apply for:</label>
             <div
                 id="teamSelect"
-                className="w-fit outline-0 flex flex-row gap-3"
+                className="w-fit outline-0 flex flex-row gap-7"
                 ref={containerRef}
             >
                 {Object.entries(menus).slice(1).map(([id, label]) => (

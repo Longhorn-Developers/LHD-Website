@@ -60,12 +60,19 @@ export const questions: Question[]  = [
         wordLimit: 10,
         role: "tech",
         required: true,
-    }
+    },
+    {
+        ID: 5,
+        description: "Question 2",
+        wordLimit: 100,
+        role: "general",
+        required: true,
+    },
 ];
 
 export const menuColors: Record<string, string> = {
     "general": "ut-burntorange",
-    "tech": "ut-yellow",
+    "tech": "ut-orange",
     "design": "ut-blue",
     "product": "ut-green",
 }
