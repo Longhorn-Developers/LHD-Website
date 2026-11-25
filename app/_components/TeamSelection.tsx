@@ -46,7 +46,7 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
     return (
         <>
             <p>Select the teams you wish to apply for and your order of preference:</p>
-            <div className="flex flex-row gap-5">
+            <div className="flex flex-row gap-5 mb-8">
                 <ul className="list-none p-0 w-80 text-theme-black">
                 {teams.map((id, index) => (
                     <li
@@ -59,13 +59,16 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
                     
                     className="drag-element"
                     >
-                    <b>{index + 1}</b> {teamOptions[id]} <Bars/>
+                    <b className="text-ut-burntorange">{index + 1}</b> {teamOptions[id]} <Bars/>
+                    <span className="text-xl -mt-0.8 text-theme-red" onClick={() => removeTeam(id)}>
+                        &times;
+                    </span>
                     </li>
                 ))}
                 </ul>
                 <ul className="list-none p-0 w-60 flex flex-col gap-2 my-3">
                 {Object.entries(teamOptions).map(([id, label]) => (
-                    <li key={id} className={teams.length > 4 ? "text-gray-400" : ""} onClick={() => addTeam(id)}>
+                    <li key={id} className={`${teams.length > 4 ? "text-gray-400" : ""}`} onClick={() => addTeam(id)}>
                     <p><b className="px-1">+</b> {label}</p>
                     </li>
                 ))}
