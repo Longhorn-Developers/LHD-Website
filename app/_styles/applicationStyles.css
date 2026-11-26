@@ -26,6 +26,14 @@ body {
     gap: 8px;
 }
 
+.add-team {
+    transition: transform 0.3s ease-in-out;
+}
+
+.add-team:hover {
+    transform: scale(1.03);
+}
+
 .role-input {
     appearance: none;
     -webkit-appearance: none;
@@ -60,7 +68,6 @@ body {
     transition: transform 0.5s cubic-bezier(.22, .53, .88, .47);
 }
 
-/* Slide in on hover */
 .role-container:hover {
     transform: scale(1.06);
 }

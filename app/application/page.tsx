@@ -2,9 +2,10 @@
 import "../_styles/applicationStyles.css";
 import { questions, menus, Question, menuColors } from "../_data/applicationQuestions";
 import { useState, Dispatch, SetStateAction, Activity } from "react";
-import TeamSelection from "../_components/TeamSelection";
-import RoleSelection from "../_components/RoleSelection";
-import QuestionBlock from "../_components/QuestionBlock";
+import TeamSelection from "../_components/application/TeamSelection";
+import RoleSelection from "../_components/application/RoleSelection";
+import QuestionBlock from "../_components/application/QuestionBlock";
+import TabSelection from "../_components/application/TabSelection";
 
 export default function ApplicationPortal() {
 
@@ -58,25 +59,3 @@ function RoleApplicationBlock({teams, setTeams, tab}: RoleApplicationProps) {
     )
 }
 
-interface TabProps {
-  tab: string;
-  setTab: Dispatch<SetStateAction<string>>;
-  roles: string[];
-}
-
-function TabSelection({tab, setTab, roles}: TabProps) {
-    return (
-        <div className="w-[40%]">
-            <div className="flex flex-row gap-6 justify-center">
-                {["general", ...roles].map((id) => (
-                    <button className={`${tab == id ? 'bg-(--bg-token)' : undefined} p-2 min-w-fit rounded-md`}
-                    style={{ '--bg-token': `var(--colors-${menuColors[id]})` } as React.CSSProperties}
-                    key={id} onClick={() => setTab(id)}>
-                        {menus[id]}
-                    </button>
-                ))}
-            </div>
-            <hr className="border border-ut-offwhite w-full mb-7 mt-1.5"></hr>
-        </div>
-    )
-}

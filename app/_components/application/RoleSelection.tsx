@@ -1,6 +1,6 @@
 "use client";
-import "../_styles/applicationStyles.css";
-import { menus, menuColors } from "../_data/applicationQuestions";
+import "../../_styles/applicationStyles.css";
+import { menus, menuColors } from "../../_data/applicationQuestions";
 import { useState, useRef, Dispatch, SetStateAction } from "react";
 
 export interface RoleProps {
@@ -8,6 +8,8 @@ export interface RoleProps {
   setRoles: Dispatch<SetStateAction<string[]>>;
 }
 
+// A component that allows for the selection of roles, and therefore applications that
+// must be completed by the applicant.
 export default function RoleSelection({roles, setRoles} : RoleProps) {
 
     const containerRef = useRef<HTMLDivElement>(null);

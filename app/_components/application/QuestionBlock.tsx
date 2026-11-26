@@ -1,12 +1,12 @@
 "use client";
-import "../_styles/applicationStyles.css";
-import { Question, questions } from "../_data/applicationQuestions";
+import "../../_styles/applicationStyles.css";
+import { Question, questions } from "../../_data/applicationQuestions";
 import { useState, useRef, Dispatch, SetStateAction } from "react";
 
-
+// A component that contains all of the questions of a certain tab.
 export default function QuestionBlock({tab} : {tab : string}) {
     return (
-        <div className="w-[40%] flex flex-col gap-10">
+        <div className="lg:w-200 w-[90%] flex flex-col gap-10">
         {questions.filter((question: Question) => question.role == tab)
             .map((question: Question) => (
                 <ApplicationQuestion question={question} key={question.ID} />
@@ -15,6 +15,7 @@ export default function QuestionBlock({tab} : {tab : string}) {
     )
 } 
 
+// Holds one question. Contains the description and word limit, and also enforces that word limit.
 export function ApplicationQuestion({question} : {question: Question}) {
 
     const [response, setResponse] = useState('');

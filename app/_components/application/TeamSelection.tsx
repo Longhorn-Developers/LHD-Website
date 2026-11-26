@@ -1,6 +1,6 @@
 "use client";
-import "../_styles/applicationStyles.css";
-import { teamOptions } from "../_data/applicationQuestions";
+import "../../_styles/applicationStyles.css";
+import { teamOptions } from "../../_data/applicationQuestions";
 import { useRef, useEffect , Dispatch, SetStateAction } from "react";
 
 interface TeamProps {
@@ -8,6 +8,8 @@ interface TeamProps {
   setTeams: Dispatch<SetStateAction<string[]>>;
 }
 
+// A component that allows for the applicant to select the teams they wish to apply for
+// for each role and their order of preference.
 export default function TeamSelection({teams, setTeams} : TeamProps) {
     
     const dragItemIndex = useRef<number | null>(null);
@@ -43,11 +45,15 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
         setTeams(updatedItems);
     };
 
+    const greyedOut = (team: string) => {
+        return teams.length >= 4 || teams.includes(team);
+    }   
+
     return (
         <>
-            <p>Select the teams you wish to apply for and your order of preference:</p>
+            <p>Select the teams you wish to apply for and your order of preference (max 4):</p>
             <div className="flex flex-row gap-5 mb-8">
-                <ul className="list-none p-0 w-80 text-theme-black">
+                <ul className="list-none p-0 w-65 text-theme-black">
                 {teams.map((id, index) => (
                     <li
                     key={id}
@@ -60,7 +66,7 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
                     className="drag-element"
                     >
                     <b className="text-ut-burntorange">{index + 1}</b> {teamOptions[id]} <Bars/>
-                    <span className="text-xl -mt-0.8 text-theme-red" onClick={() => removeTeam(id)}>
+                    <span className="text-xl -mt-0.8 text-theme-red cursor-pointer" onClick={() => removeTeam(id)}>
                         &times;
                     </span>
                     </li>
@@ -68,8 +74,8 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
                 </ul>
                 <ul className="list-none p-0 w-60 flex flex-col gap-2 my-3">
                 {Object.entries(teamOptions).map(([id, label]) => (
-                    <li key={id} className={`${teams.length > 4 ? "text-gray-400" : ""}`} onClick={() => addTeam(id)}>
-                    <p><b className="px-1">+</b> {label}</p>
+                    <li key={id} className={`${greyedOut(id) ? "text-theme-muted" : "add-team"}`} onClick={() => addTeam(id)}>
+                        <p><b className="px-1">+</b> {label}</p>
                     </li>
                 ))}
                 </ul>

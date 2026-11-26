@@ -15,8 +15,10 @@ export type Question = {
     required: boolean;
 }
 
+// A type of all possible roles.
 export type Role = "product" | "design" | "tech" | "general";
 
+// Stores the titles and IDs of each menu.
 export const menus: Record<string, string> = {
     "general": "General Questions",
     "product": "Product Application",
@@ -24,6 +26,8 @@ export const menus: Record<string, string> = {
     "tech": "Developer Application",
 }
 
+// All of the teams currently existing. This will most likely be grabbed from the database
+// instead of being hardcoded like such.
 export const teamOptions: Record<string, string> = {
     "ut-registration-plus": "UT Registration Plus",
     "ut-marketplace": "UT Marketplace",
@@ -32,6 +36,7 @@ export const teamOptions: Record<string, string> = {
     "pet-bevo": "Pet Bevo",
 }
 
+// A list of all questions. Again, this will probably be grabbed from the database.
 export const questions: Question[]  = [
     {
         ID: 1,
@@ -70,6 +75,8 @@ export const questions: Question[]  = [
     },
 ];
 
+
+// The accent colors associated with each of the menus.
 export const menuColors: Record<string, string> = {
     "general": "ut-burntorange",
     "tech": "ut-orange",
