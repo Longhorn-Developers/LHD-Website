@@ -53,7 +53,7 @@ export default function TeamSelection({teams, setTeams} : TeamProps) {
         <>
             <p>Select the teams you wish to apply for and your order of preference (max 4):</p>
             <div className="flex flex-row gap-5 mb-8">
-                <ul className="list-none p-0 w-65 text-theme-black">
+                <ul className="list-none p-0 lg:w-80 w-65 text-theme-black">
                 {teams.map((id, index) => (
                     <li
                     key={id}

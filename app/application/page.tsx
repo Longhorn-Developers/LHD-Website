@@ -1,7 +1,8 @@
 "use client";
 import "../_styles/applicationStyles.css";
-import { questions, menus, Question, menuColors } from "../_data/applicationQuestions";
+import { menus } from "../_data/applicationQuestions";
 import { useState, Dispatch, SetStateAction, Activity } from "react";
+import Image from 'next/image';
 import TeamSelection from "../_components/application/TeamSelection";
 import RoleSelection from "../_components/application/RoleSelection";
 import QuestionBlock from "../_components/application/QuestionBlock";
@@ -15,7 +16,8 @@ export default function ApplicationPortal() {
     const availableTeams = Object.keys(menus).slice(1);
 
     return (
-        <div className="portal-body">
+        <div className="portal-body 2xl:mt-25!">
+            <LHDGraphic />
             <TabSelection tab={tab} setTab={setTab} roles={roles} />
              
             <Activity mode={tab === "general" ? 'visible' : 'hidden'}>
@@ -59,3 +61,12 @@ function RoleApplicationBlock({teams, setTeams, tab}: RoleApplicationProps) {
     )
 }
 
+function LHDGraphic() {
+    return (
+        <div className="lhd-header">
+            <Image src="/lhdlogo.png" width="100" height="100" alt="LHD Logo"
+            className="rounded-xl max-2xl:size-20" />
+            <p className="text-2xl 2xl:text-3xl mt-3">Longhorn Developers Application</p>
+        </div>
+    )
+}

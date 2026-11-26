@@ -10,7 +10,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 50px;
+    margin: 30px;
 }
 
 .drag-element {
@@ -74,4 +74,23 @@ body {
 
 .role-container:has(input[type="checkbox"]:checked)::before {
     transform: translateX(0);
+}
+
+.lhd-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    width: 360px;
+}
+
+@media (width <= 1536px) {
+    .lhd-header {
+        position: relative;
+        padding: 20px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 }
